@@ -1,0 +1,77 @@
+DELAY 500
+CTRL ESC
+DELAY 50
+STRING notepad.exe
+ENTER
+DELAY 500
+STRING           , ,\ ,'\,'\ ,'\ ,\ ,
+ENTER
+STRING     ,  ,\/ \' `'     `   '  /|
+ENTER
+STRING     |\/                      |
+ENTER
+STRING     :                        |
+ENTER
+STRING     :                        |
+ENTER
+STRING      |                       |
+ENTER
+STRING      |                       |
+ENTER
+STRING      :               -.     _|
+ENTER
+STRING      :                \     `.
+ENTER
+STRING      |         ________:______\
+ENTER
+STRING      :       ,'o       / o    ,
+ENTER
+STRING      :       \       ,'-----./
+ENTER
+STRING       \_      `--.--'        )
+ENTER
+STRING      ,` `.              ,---'|
+ENTER
+STRING      : `                     |
+ENTER
+STRING       `,-'                   |
+ENTER
+STRING       /      ,---.          ,'
+ENTER
+STRING    ,-'            `-,------'
+ENTER
+STRING    `.        ,--'
+ENTER
+STRING      `-.____/
+ENTER
+STRING             \
+ENTER
+ENTER
+STRING I will learn to lock my computer.
+ENTER
+STRING I will learn to lock my computer.
+ENTER
+STRING I will learn to lock my computer.
+ENTER
+STRING I will learn to lock my computer.
+ENTER
+STRING I will learn to lock my computer.
+ENTER
+STRING I will learn to lock my computer.
+ENTER
+STRING I will learn to lock my computer.
+ENTER
+STRING I will learn to lock my computer.
+ENTER
+STRING I will learn to lock my computer.
+ENTER
+STRING I will learn to lock my computer.
+ENTER
+ENTER
+STRING Please remember to lock your computer when you step away from your desk.
+ENTER
+ENTER
+STRING Thank you.
+DELAY 100
+ALT SPACE
+STRING x
