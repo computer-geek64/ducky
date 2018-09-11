@@ -1,0 +1,5 @@
+DELAY 500
+CTRL ESC
+DELAY 50
+STRING shutdown /p /f
+ENTER
