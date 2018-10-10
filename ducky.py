@@ -124,6 +124,7 @@ while not stop:
             print("ducky/ftp            N/A          Start FTP server on attacker machine")
             print("                     -q           Close FTP server on attacker machine")
             print("ducky/upload         \"filename\"   Upload a file to attacker machine using FTP")
+            print("ducky/rickroll       N/A          Prank the victim with a rickroll")
             stdin = ""
         elif ducky_command[:4] == "quit":
             options = [x for x in ducky_command.split(" ")[1:] if x]
