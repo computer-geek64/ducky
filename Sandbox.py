@@ -2,17 +2,17 @@
 # Ashish D'Souza
 # October 9th, 2018
 
-from pyftpdlib import DummyAuthorizer
+from pyftpdlib import servers
 from pyftpdlib.handlers import FTPHandler
-from pyftpdlib.servers import FTPServer
+from pyftpdlib.authorizers import DummyAuthorizer
 
 
 authorizer = DummyAuthorizer()
-authorizer.add_user("user", "123456", "/home/username, pwerm="elradfmw)
-authorizer.add_anonymous("/root", perm="elradfmw")
-
+authorizer.add_anonymous(".", perm="elradfmw")
 handler = FTPHandler
 handler.authorizer = authorizer
-
-server = FTPServer(("192.168.0.199", 1026), handler)
+address = ("0.0.0.0", 21)
+server = servers.FTPServer(address, handler)
+server.set_reuse_addr()
 server.serve_forever()
+server.close()
