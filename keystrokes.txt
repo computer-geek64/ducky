@@ -19,7 +19,7 @@ RETURN			{RETURN}
 RIGHT ARROW		{RIGHT}
 SCROLL LOCK		{SCROLLLOCK}
 TAB			{TAB}
-UP ARROW		{UP}
+UP ARROW	{UP}
 F1 through F15		{F1} through {F15}
 SHIFT			+ (plus sign)
 CTRL			^ (caret)
