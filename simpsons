@@ -1,0 +1,28 @@
+function k([string]$a){(new-object -comobject wscript.shell).sendkeys($a)}
+notepad
+sleep 1
+k "          , ,\ ,'\,'\ ,'\ ,\ ,~"
+k "    ,  ,\/ \' `'     `   '  /|~"
+k "    |\/                      |~"
+k "    :                        |~"
+k "    :                        |~"
+k "     |                       |~"
+k "     |                       |~"
+k "     :               -.     _|~"
+k "     :                \     `.~"
+k "     |         ________:______\~"
+k "     :       ,'o       / o    ,~"
+k "     :       \       ,'-----./~"
+k "      \_      `--.--'        )~"
+k "     ,` `.              ,---'|~"
+k "     : `                     |~"
+k "      `,-'                   |~"
+k "      /      ,---.          ,'~"
+k "   ,-'            `-,------'~"
+k "   `.        ,--'~"
+k "     `-.____/~"
+k "            \~~"
+1..10 | % {"I will learn to lock my computer.~"}
+k "~Thank you."
+k "% "
+k "x"
