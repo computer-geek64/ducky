@@ -1,1 +1,1 @@
-powershell -w h iex while($true){(new-object -comobject wscript.shell).sendkeys("{CAPSLOCK}"); sleep 1}
+powershell -w h while($true){(new-object -comobject wscript.shell).sendkeys("{CAPSLOCK}"); sleep 1}
