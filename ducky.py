@@ -126,6 +126,8 @@ while not stop:
             print("ducky/upload         \"filename\"   Upload a file to attacker machine using FTP")
             print("ducky/rickroll       N/A          Prank the victim with a rickroll")
             print("ducky/keylogger      \"timeout\"    Execute a keylogger, leave blank for indefinite")
+            print("ducky/capslock       N/A          Prank the victim with a toggling caps lock")
+            print("ducky/escape         N/A          Prank the victim with a toggling escape key")
             stdin = ""
         elif ducky_command[:4] == "quit":
             options = [x for x in ducky_command.split(" ")[1:] if x]
