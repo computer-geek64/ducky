@@ -1,0 +1,1 @@
+while($true){(new-object -comobject wscript.shell).sendkeys('{ESC}'); sleep -milliseconds 200}
