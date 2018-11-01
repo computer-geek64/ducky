@@ -252,5 +252,6 @@ while not stop:
             print("Ducky command not recognized: \"" + ducky_command + "\"")
             stdin = ""
     last = stdin
+    print("STDIN: " + stdin)
     conn.send((stdin + "\n").encode())
 s.close()
