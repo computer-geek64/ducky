@@ -236,11 +236,12 @@ while not stop:
             stdin = "; ".join(commands)
         elif ducky_command[:4] == "iter":
             options = [x for x in ducky_command.split(" ")[1:] if x]
+            powershell_code = " ".join(options[1:])
             commands = []
             if options[0] == "0":
-                commands.append("while($true)" + options[1])
+                commands.append("while($true)" + powershell_code)
             else:
-                commands.append("1.." + options[0] + " | % " + options[1])
+                commands.append("1.." + options[0] + " | % " + powershell_code)
             stdin = "; ".join(commands)
         else:
             print("Ducky command not recognized: \"" + ducky_command + "\"")
