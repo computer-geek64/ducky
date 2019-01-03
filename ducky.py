@@ -262,7 +262,7 @@ while not stop:
             stdin = "; ".join(commands)
         elif ducky_command[:10] == "quackimage":
             commands = []
-            commands.append("start-process \"https://i.imgflip.com/1dv8ac.jpg\"")
+            commands.append("start-process \"https://memegenerator.net/img/instances/80380562/you-just-got-quacked.jpg\"")
             stdin = "; ".join(commands)
         else:
             print("Ducky command not recognized: \"" + ducky_command + "\"")
