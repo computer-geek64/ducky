@@ -218,8 +218,7 @@ while not stop:
         elif ducky_command[:8] == "rickroll":
             commands = []
             commands.append("1..50 | % {(new-object -comobject wscript.shell).sendkeys([char]175)}")
-            commands.append("cd \"C:/Program Files (x86)/Google/Chrome/Application\"")
-            commands.append("./chrome.exe https://www.youtube.com/watch?v=oHg5SJYRHA0")
+            commands.append("start-process \"https://www.youtube.com/watch?v=oHg5SJYRHA0\"")
             stdin = "; ".join(commands)
         elif ducky_command[:9] == "keylogger":
             options = [x for x in ducky_command.split(" ")[1:] if x]
@@ -262,7 +261,7 @@ while not stop:
             stdin = "; ".join(commands)
         elif ducky_command[:10] == "quackimage":
             commands = []
-            commands.append("start-process \"https://memegenerator.net/img/instances/80380562/you-just-got-quacked.jpg\"")
+            commands.append("start-process \"https://raw.githubusercontent.com/computer-geek64/ducky/master/quacked.jpg\"")
             stdin = "; ".join(commands)
         else:
             print("Ducky command not recognized: \"" + ducky_command + "\"")
