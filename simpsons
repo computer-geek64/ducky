@@ -2,51 +2,29 @@ function k([string]$a){(new-object -comobject wscript.shell).sendkeys($a)}
 notepad
 sleep 1
 k "          , ,\ ,'\,'\ ,'\ ,\ ,~"
-#sleep 1
 k "    ,  ,\/ \' ``'     ``   '  /|~"
-#sleep 1
 k "    |\/                      |~"
-#sleep 1
 k "    :                        |~"
-#sleep 1
 k "    :                        |~"
-#sleep 1
 k "     |                       |~"
-#sleep 1
 k "     |                       |~"
-#sleep 1
 k "     :               -.     _|~"
-#sleep 1
 k "     :                \     ``.~"
-#sleep 1
 k "     |         ________:______\~"
-#sleep 1
 k "     :       ,'o       / o    ,~"
-#sleep 1
 k "     :       \       ,'-----./~"
-#sleep 1
 k "      \_      ``--.--'        {)}~"
-#sleep 1
 k "     ,`` ``.              ,---'|~"
-#sleep 1
 k "     : ``                     |~"
-#sleep 1
 k "      ``,-'                   |~"
-#sleep 1
 k "      /      ,---.          ,'~"
-#sleep 1
 k "   ,-'            ``-,------'~"
-#sleep 1
 k "   ``.        ,--'~"
-#sleep 1
 k "     ``-.____/~"
-#sleep 1
 k "            \~~"
-#sleep 1
 1..10 | % {k "I will learn to lock my computer.~"}
-#sleep 1
+k "~Please remember to lock your computer when you step away from your desk.~"
 k "~Thank you."
-sleep -milliseconds 100
 k "% "
 sleep -milliseconds 100
 k "x"
