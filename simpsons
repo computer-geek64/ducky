@@ -3,7 +3,7 @@ notepad
 sleep 1
 k "          , ,\ ,'\,'\ ,'\ ,\ ,~"
 sleep 1
-k "    ,  ,\/ \' `'     `   '  /|~"
+k "    ,  ,\/ \' ``'     ``   '  /|~"
 sleep 1
 k "    |\/                      |~"
 sleep 1
@@ -17,7 +17,7 @@ k "     |                       |~"
 sleep 1
 k "     :               -.     _|~"
 sleep 1
-k "     :                \     `.~"
+k "     :                \     ``.~"
 sleep 1
 k "     |         ________:______\~"
 sleep 1
@@ -25,25 +25,25 @@ k "     :       ,'o       / o    ,~"
 sleep 1
 k "     :       \       ,'-----./~"
 sleep 1
-k "      \_      `--.--'        )~"
+k "      \_      ``--.--'        )~"
 sleep 1
-k "     ,` `.              ,---'|~"
+k "     ,`` ``.              ,---'|~"
 sleep 1
-k "     : `                     |~"
+k "     : ``                     |~"
 sleep 1
-k "      `,-'                   |~"
+k "      ``,-'                   |~"
 sleep 1
 k "      /      ,---.          ,'~"
 sleep 1
-k "   ,-'            `-,------'~"
+k "   ,-'            ``-,------'~"
 sleep 1
-k "   `.        ,--'~"
+k "   ``.        ,--'~"
 sleep 1
-k "     `-.____/~"
+k "     ``-.____/~"
 sleep 1
 k "            \~~"
 sleep 1
-1..10 | % {"I will learn to lock my computer.~"}
+1..10 | % {k "I will learn to lock my computer.~"}
 sleep 1
 k "~Thank you."
 sleep 1
