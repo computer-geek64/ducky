@@ -28,4 +28,4 @@ k "~Thank you."
 k "% "
 sleep -milliseconds 100
 k "x"
-rundll32.exe user32.dll, LockWorkStation
+#rundll32.exe user32.dll, LockWorkStation
