@@ -4,5 +4,6 @@ $current = (invoke-webrequest raw.githubusercontent.com/computer-geek64/ducky/ma
 if(-not ($current -clike $previous )){
 $previous = $current
 $current
+}
 sleep 15
-}}
+}
