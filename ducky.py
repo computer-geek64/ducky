@@ -254,7 +254,7 @@ while not stop:
         elif ducky_command[:7] == "killall":
             options = [x for x in ducky_command.split(" ")[1:] if x]
             commands = []
-            commands.append("tasklist | findstr /i " + options[0] + " | findstr /v $pid | foreach-object{taskkill /f /pid $_.split(\" \")[16]}")
+            commands.append("tasklist | findstr /i " + options[0] + " | findstr /v $pid | foreach-object{taskkill /f /pid $_.replace(\"     \",\" \").replace(\"    \",\" \").replace(\"   \",\" \").replace(\"  \",\" \").split(\" \")[1]}")
             stdin = "; ".join(commands)
         elif ducky_command[:9] == "cdromloop":
             commands = []
