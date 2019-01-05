@@ -1,4 +1,4 @@
-function k([string]$a){(new-object -comobject wscript.shell).sendkeys($a)}
+function k([string]$a){(new-object -comobject wscript.shell).sendkeys("$a")}
 notepad
 sleep 1
 k "                      ↓7↕↓↕↓↓↓11↓~"
