@@ -340,4 +340,6 @@ while not stop:
         stdin = "k \"" + stdin[2:] + "\""
     last = stdin
     conn.send((stdin + "\n").encode())
+    if stop:
+        sys.exit(0)
 s.close()
