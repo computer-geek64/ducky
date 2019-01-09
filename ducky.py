@@ -16,7 +16,7 @@ if "-h" in sys.argv or "--help" in sys.argv:
     print("Usage: " + os.path.split(sys.argv[0])[-1] + " [options]\n")
     print("Option\t\tLong Option\t\tDescription")
     print("-h\t\t--help\t\t\tShow this help screen")
-    print("-p [port]\t\t--port [port]\tUse specified port")
+    print("-p [port]\t--port [port]\t\tUse specified port")
     print("-i [ip:port]\t--ip [ip:port]\t\tIP address and port to connect back to")
     print("-s [ip:port]\t--ssh [ip:port]\t\tIP address and port to upload files to via SCP (SSH Server)")
     sys.exit(0)
