@@ -25,9 +25,9 @@ timeout = False
 stop = False
 
 if "-p" in sys.argv:
-    port = sys.argv[sys.argv.index("-p") + 1]
+    port = int(sys.argv[sys.argv.index("-p") + 1])
 elif "--port" in sys.argv:
-    port = sys.argv[sys.argv.index("--port") + 1]
+    port = int(sys.argv[sys.argv.index("--port") + 1])
 else:
     port = 8008
 
