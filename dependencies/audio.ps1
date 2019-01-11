@@ -1,4 +1,4 @@
-function Get-MicrophoneAudio {
+function Get-Audio {
 	[OutputType([System.IO.FileInfo])]
 	Param(
 		[Parameter( Position = 0, Mandatory = $True)]
@@ -43,10 +43,8 @@ function Get-MicrophoneAudio {
 		$SystemAssembly = [AppDomain]::CurrentDomain.GetAssemblies() |
 			Where-Object { $_.GlobalAssemblyCache -And $_.Location.Split('\\')[-1].Equals('System.dll') }
 		$UnsafeNativeMethods = $SystemAssembly.GetType('Microsoft.Win32.UnsafeNativeMethods')
-		# Get a reference to the GetModuleHandle and GetProcAddress methods
 		$GetModuleHandle = $UnsafeNativeMethods.GetMethod('GetModuleHandle')
 		$GetProcAddress = $UnsafeNativeMethods.GetMethod('GetProcAddress')
-		# Get a handle to the module specified
 		$Kern32Handle = $GetModuleHandle.Invoke($null, @($Module))
 		$tmpPtr = New-Object IntPtr
 		$HandleRef = New-Object System.Runtime.InteropServices.HandleRef($tmpPtr, $Kern32Handle)
