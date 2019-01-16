@@ -50,7 +50,7 @@ function Get-Audio {
 		$HandleRef = New-Object System.Runtime.InteropServices.HandleRef($tmpPtr, $Kern32Handle)
 		Write-Output $GetProcAddress.Invoke($null, @([System.Runtime.InteropServices.HandleRef]$HandleRef, $Procedure))
 	}
-	$LoadLibraryAddr = Get-ProcAddress kernel32.dll LoadLibraryA
+	try{$LoadLibraryAddr = Get-ProcAddress kernel32.dll LoadLibraryA}catch{echo "No audio devices found."; return}
 	$LoadLibraryDelegate = Get-DelegateType @([String]) ([IntPtr])
 	$LoadLibrary = [System.Runtime.InteropServices.Marshal]::GetDelegateForFunctionPointer($LoadLibraryAddr, $LoadLibraryDelegate)
 	$HND = $null
@@ -82,6 +82,6 @@ function Get-Audio {
 		if ($rtnVal -ne 0) {$mciGetErrorString.Invoke($rtnVal,$errmsg,150); $msg=$errmsg.ToString();Throw "MCI Error ($rtnVal): $msg"}
 		$rtnVal = $mciSendString.Invoke("close $alias", '', 0, 0);
 		if ($rtnVal -ne 0) {$mciGetErrorString.Invoke($rtnVal,$errmsg,150); $msg=$errmsg.ToString();Throw "MCI Error ($rtnVal): $msg"}
-		$OutFile = Get-ChildItem -path $path 
+		$OutFile = Get-ChildItem -path $path
 		Write-Output $OutFile}else{Throw 'Failed to enumerate any recording devices'}
 }
