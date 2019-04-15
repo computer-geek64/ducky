@@ -1,6 +1,5 @@
 # USB Rubber Ducky Repository
-## Ashish D'Souza
-*October 8th, 2018*
+*April 15th, 2019*
 
 This is a repository containing various payloads for the USB Rubber Ducky by Hak5. The best payload developed so far is the Powershell Reverse Shell, undetectable by antivirus and unblockable by firewalls, taking a mere 2 seconds to execute on the victim's computer.
 
