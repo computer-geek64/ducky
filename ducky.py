@@ -174,6 +174,7 @@ while not stop:
             print("ducky/creds          N/A          Preform a credential dump")
             print("ducky/print          [file]       Print a file to the default printer")
             print("ducky/ls             N/A          List files by date modified")
+            print("ducky/product_key    N/A          Get Windows Product Key")
             stdin = ""
         elif ducky_command[:4] == "quit":
             options = [x for x in ducky_command.split(" ")[1:] if x]
@@ -350,6 +351,10 @@ while not stop:
         elif ducky_command[:2] == "ls":
             commands = []
             commands.append("(ls | sort lastwritetime -descending | out-string).trim()")
+            stdin = "; ".join(commands)
+        elif ducky_command[:11] == "product_key":
+            commands = []
+            commands.append("(wmic path SoftwareLicensingService get OA3xOriginalProductKey)[2]")
             stdin = "; ".join(commands)
         else:
             print("Ducky command not recognized: \"" + ducky_command + "\"")
