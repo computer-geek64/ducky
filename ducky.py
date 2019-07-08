@@ -180,7 +180,6 @@ while not stop:
             print("ducky/creds          N/A          Preform a credential dump")
             print("ducky/print          [file]       Print a file to the default printer")
             print("ducky/ls             N/A          List files by date modified")
-            print("ducky/git            [command]")
             stdin = ""
         elif ducky_command[:4] == "quit":
             options = [x for x in ducky_command.split(" ")[1:] if x]
